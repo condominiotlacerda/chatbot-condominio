@@ -1,0 +1,83 @@
+[2025-05-06T17:41:37.980Z] Usuário Felipe Granja (558598271656@c.us) digitou: "Oi"
+[2025-05-06T17:41:41.490Z] Arquivo enviado para Felipe Granja (558598271656@c.us): Imagem lacerda_assistente.png enviada
+[2025-05-06T17:41:41.496Z] Sistema para Felipe Granja (558598271656@c.us): Olá, Felipe Granja! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-06T17:41:47.583Z] Usuário Felipe Granja (558598271656@c.us) digitou: "2"
+[2025-05-06T17:41:47.597Z] Sistema para Felipe Granja (558598271656@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-06T17:41:57.016Z] Usuário Felipe Granja (558598271656@c.us) digitou: "5"
+[2025-05-06T17:41:59.039Z] Arquivo enviado para Felipe Granja (558598271656@c.us): prestacao_contas_maio_2025.pdf
+[2025-05-06T17:41:59.553Z] Sistema para Felipe Granja (558598271656@c.us): 
+Digite 0 para voltar ao menu de meses ou "s" para sair.
+[2025-05-06T17:42:19.049Z] Usuário Felipe Granja (558598271656@c.us) digitou: "0"
+[2025-05-06T17:42:19.064Z] Sistema para Felipe Granja (558598271656@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-06T17:42:23.308Z] Usuário Felipe Granja (558598271656@c.us) digitou: "4"
+[2025-05-06T17:42:27.170Z] Arquivo enviado para Felipe Granja (558598271656@c.us): prestacao_contas_abril_2025.pdf
+[2025-05-06T17:42:27.686Z] Sistema para Felipe Granja (558598271656@c.us): 
+Digite 0 para voltar ao menu de meses ou "s" para sair.
+[2025-05-06T17:42:44.790Z] Usuário Felipe Granja (558598271656@c.us) digitou: "0"
+[2025-05-06T17:42:44.807Z] Sistema para Felipe Granja (558598271656@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-06T17:42:47.331Z] Usuário Felipe Granja (558598271656@c.us) digitou: "0"
+[2025-05-06T17:42:47.619Z] Sistema para Felipe Granja (558598271656@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-06T17:42:55.887Z] Usuário Felipe Granja (558598271656@c.us) digitou: "4"
+[2025-05-06T17:42:57.167Z] Arquivo enviado para Felipe Granja (558598271656@c.us): previsao_despesas.pdf
+[2025-05-06T17:42:57.694Z] Sistema para Felipe Granja (558598271656@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-06T17:45:57.711Z] Sistema para Felipe Granja (558598271656@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-05-06T17:45:57.720Z] Sistema para Felipe Granja (558598271656@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

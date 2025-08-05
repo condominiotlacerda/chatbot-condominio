@@ -1,0 +1,20 @@
+[2025-04-02T13:40:28.605Z] Usuário Felipe Granja (558598271656@c.us) digitou: "Oi"
+[2025-04-02T13:40:29.014Z] Arquivo enviado para Felipe Granja (558598271656@c.us): Imagem lacerda_assistente.png enviada
+[2025-04-02T13:40:29.019Z] Sistema para Felipe Granja (558598271656@c.us): Olá, Felipe Granja! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+
+Para sair digite "sair" ou "s"
+[2025-04-02T13:40:35.888Z] Usuário Felipe Granja (558598271656@c.us) digitou: "1"
+[2025-04-02T13:40:36.629Z] Sistema para Felipe Granja (558598271656@c.us): Enviando boletos do apartamento 102:
+[2025-04-02T13:40:37.265Z] Arquivo enviado para Felipe Granja (558598271656@c.us): boleto_tx_condominio_apto_102.pdf
+[2025-04-02T13:40:38.094Z] Arquivo enviado para Felipe Granja (558598271656@c.us): boleto_tx_1_apto_102.pdf
+[2025-04-02T13:40:38.819Z] Arquivo enviado para Felipe Granja (558598271656@c.us): boleto_tx_2_apto_102.pdf
+[2025-04-02T13:40:40.591Z] Arquivo enviado para Felipe Granja (558598271656@c.us): boleto_tx_3_apto_102.pdf
+[2025-04-02T13:40:41.108Z] Sistema para Felipe Granja (558598271656@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-04-02T13:43:41.137Z] Sistema para Felipe Granja (558598271656@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-04-02T13:43:41.150Z] Sistema para Felipe Granja (558598271656@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

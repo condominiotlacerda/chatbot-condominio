@@ -1,0 +1,30 @@
+[2025-05-07T18:49:03.808Z] Usuário José Rocha (558597294028@c.us) digitou: ""
+[2025-05-07T18:49:03.823Z] Sistema para José Rocha (558597294028@c.us): Digite "oi" ou "ola" para iniciar!
+[2025-05-07T18:49:04.224Z] Usuário José Rocha (558597294028@c.us) digitou: "Oi. Boa tarde."
+[2025-05-07T18:49:04.342Z] Sistema para José Rocha (558597294028@c.us): Digite "oi" ou "ola" para iniciar!
+[2025-05-07T18:49:21.122Z] Usuário José Rocha (558597294028@c.us) digitou: "Bot."
+[2025-05-07T18:49:21.139Z] Sistema para José Rocha (558597294028@c.us): Digite "oi" ou "ola" para iniciar!
+[2025-05-07T18:50:15.961Z] Usuário José Rocha (558597294028@c.us) digitou: "Oi."
+[2025-05-07T18:50:16.127Z] Sistema para José Rocha (558597294028@c.us): Digite "oi" ou "ola" para iniciar!
+[2025-05-07T18:50:19.700Z] Usuário José Rocha (558597294028@c.us) digitou: "Oi"
+[2025-05-07T18:50:20.384Z] Arquivo enviado para José Rocha (558597294028@c.us): Imagem lacerda_assistente.png enviada
+[2025-05-07T18:50:20.392Z] Sistema para José Rocha (558597294028@c.us): Olá, José Rocha! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-07T18:50:27.172Z] Usuário José Rocha (558597294028@c.us) digitou: "1"
+[2025-05-07T18:50:27.810Z] Sistema para José Rocha (558597294028@c.us): Enviando boletos do apartamento 1:
+[2025-05-07T18:50:29.249Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_condominio_apto_1.pdf
+[2025-05-07T18:50:30.538Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_1_apto_1.pdf
+[2025-05-07T18:50:31.900Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_2_apto_1.pdf
+[2025-05-07T18:50:33.519Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_3_apto_1.pdf
+[2025-05-07T18:50:34.032Z] Sistema para José Rocha (558597294028@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T18:53:34.060Z] Sistema para José Rocha (558597294028@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-05-07T18:53:34.065Z] Sistema para José Rocha (558597294028@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

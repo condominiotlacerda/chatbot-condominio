@@ -1,0 +1,22 @@
+[2025-06-06T20:33:55.609Z] Usuário Jorge (558599840514@c.us) digitou: "Oi"
+[2025-06-06T20:34:00.350Z] Arquivo enviado para Jorge (558599840514@c.us): Imagem lacerda_assistente.png enviada
+[2025-06-06T20:34:00.355Z] Sistema para Jorge (558599840514@c.us): Olá, Jorge! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-06-06T20:34:04.491Z] Usuário Jorge (558599840514@c.us) digitou: "1"
+[2025-06-06T20:34:05.149Z] Sistema para Jorge (558599840514@c.us): Enviando boletos do apartamento 201:
+[2025-06-06T20:34:06.899Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_condominio_apto_201.pdf
+[2025-06-06T20:34:08.414Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_1_apto_201.pdf
+[2025-06-06T20:34:09.361Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_2_apto_201.pdf
+[2025-06-06T20:34:10.191Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_3_apto_201.pdf
+[2025-06-06T20:34:10.710Z] Sistema para Jorge (558599840514@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-06-06T20:37:10.721Z] Sistema para Jorge (558599840514@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-06-06T20:37:10.726Z] Sistema para Jorge (558599840514@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

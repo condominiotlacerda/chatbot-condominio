@@ -1,0 +1,37 @@
+[2025-06-05T15:35:21.182Z] Usuário Jorge (558599840514@c.us) digitou: "oi"
+[2025-06-05T15:35:24.690Z] Arquivo enviado para Jorge (558599840514@c.us): Imagem lacerda_assistente.png enviada
+[2025-06-05T15:35:24.697Z] Sistema para Jorge (558599840514@c.us): Olá, Jorge! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-06-05T15:35:39.264Z] Usuário Jorge (558599840514@c.us) digitou: "1"
+[2025-06-05T15:35:39.981Z] Sistema para Jorge (558599840514@c.us): Enviando boletos do apartamento 201:
+[2025-06-05T15:35:41.265Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_condominio_apto_201.pdf
+[2025-06-05T15:35:42.727Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_1_apto_201.pdf
+[2025-06-05T15:35:43.624Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_2_apto_201.pdf
+[2025-06-05T15:35:45.110Z] Arquivo enviado para Jorge (558599840514@c.us): boleto_tx_3_apto_201.pdf
+[2025-06-05T15:35:45.619Z] Sistema para Jorge (558599840514@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-06-05T15:36:54.304Z] Usuário Jorge (558599840514@c.us) digitou: "4"
+[2025-06-05T15:36:54.329Z] Sistema para Jorge (558599840514@c.us): Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-06-05T15:37:14.418Z] Usuário Jorge (558599840514@c.us) digitou: "0"
+[2025-06-05T15:37:14.627Z] Sistema para Jorge (558599840514@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-06-05T15:37:18.688Z] Usuário Jorge (558599840514@c.us) digitou: "4"
+[2025-06-05T15:37:21.066Z] Arquivo enviado para Jorge (558599840514@c.us): previsao_despesas.pdf
+[2025-06-05T15:37:21.573Z] Sistema para Jorge (558599840514@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-06-05T15:40:21.602Z] Sistema para Jorge (558599840514@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-06-05T15:40:21.612Z] Sistema para Jorge (558599840514@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.
