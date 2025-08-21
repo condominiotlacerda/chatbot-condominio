@@ -1,11 +1,14 @@
+// IMPORTANTE: Adicione esta linha no início do seu arquivo
+const puppeteer = require('puppeteer-core');
+
 const fs = require('fs');
 const qrcode = require('qrcode-terminal');
-const { Client, MessageMedia, LocalAuth } = require('whatsapp-web.js'); // Adicionei 'LocalAuth'
+const { Client, MessageMedia, LocalAuth } = require('whatsapp-web.js');
 const path = require('path');
 const express = require('express');
 const app = express();
 
-/ Define a porta que o servidor vai usar
+// Define a porta que o servidor vai usar
 const PORT = process.env.PORT || 8080;
 
 // O endereço IP que o servidor vai "ouvir".
@@ -21,6 +24,35 @@ app.get('/', (req, res) => {
 app.listen(PORT, HOST, () => {
     console.log(`Server is running at http://${HOST}:${PORT}`);
 });
+
+// Crie a instância do cliente e adicione o objeto puppeteer
+// Isso garante que a Render saiba onde encontrar o navegador Chromium
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    }
+});
+
+client.on('qr', (qr) => {
+    // Gere e escaneie este QR Code com seu celular para autenticar o bot
+    console.log('QR RECEIVED', qr);
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.on('message', message => {
+    // Este é um exemplo simples para responder à sua mensagem
+    if (message.body === '!ping') {
+        message.reply('pong');
+    }
+});
+
+client.initialize();
 
 
 // Configurações
