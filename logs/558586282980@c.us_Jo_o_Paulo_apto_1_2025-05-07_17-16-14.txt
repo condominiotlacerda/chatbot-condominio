@@ -1,0 +1,18 @@
+[2025-05-07T20:16:14.703Z] Usuário João Paulo (558586282980@c.us) digitou: "Oi"
+[2025-05-07T20:16:18.135Z] Arquivo enviado para João Paulo (558586282980@c.us): Imagem lacerda_assistente.png enviada
+[2025-05-07T20:16:18.142Z] Sistema para João Paulo (558586282980@c.us): Olá, João Paulo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-07T20:16:24.280Z] Usuário João Paulo (558586282980@c.us) digitou: "4"
+[2025-05-07T20:16:25.360Z] Arquivo enviado para João Paulo (558586282980@c.us): previsao_despesas.pdf
+[2025-05-07T20:16:25.866Z] Sistema para João Paulo (558586282980@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T20:19:25.881Z] Sistema para João Paulo (558586282980@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-05-07T20:19:25.886Z] Sistema para João Paulo (558586282980@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

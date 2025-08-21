@@ -1,0 +1,20 @@
+NOMES DAS TAXAS PADRÃO - SITE
+
+"Taxa Condominial": "boleto_tx_condominio_apto_1.pdf",
+    "Taxa Mnt Emergenciais": "boleto_tx_1_apto_1.pdf",
+    "Ressarc. síndico": "boleto_tx_2_apto_1.pdf",
+    "": "boleto_tx_3_apto_1.pdf"
+
+
+CHATBOT
+
+{
+  "apto_1": "Boletos\n1. Condomínio\n2. Mnt emergenciais\n3. Ressarcimento síndico",
+  "apto_101": "Boletos\n1. Condomínio\n2. Mnt emergenciais",
+  "apto_102": "Boletos\n1. Condomínio\n2. Mnt emergenciais\n3. Ressarcimento síndico",
+  "apto_201": "Boletos\n1. Condomínio\n2. Mnt emergenciais\n3. Ressarcimento síndico",
+  "apto_202": "Boletos\n1. Condomínio\n2. Mnt emergenciais\n3. Ressarcimento síndico",
+  "apto_301": "Boletos\n1. Condomínio\n2. Mnt emergenciais\n3. Ressarcimento síndico",
+  "apto_302": "Boletos\n1. Condomínio\n2. Mnt emergenciais\n3. Ressarcimento síndico",
+  "apto_401": "Boletos\n1. Condomínio\n2. Mnt emergenciais"
+}

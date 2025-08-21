@@ -1,0 +1,28 @@
+[2025-03-19T21:28:56.688Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-19T21:28:57.042Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-19T21:28:57.050Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:29:00.474Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T21:29:01.143Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10/04/2025:
+[2025-03-19T21:29:01.657Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-19T21:29:02.402Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-19T21:29:03.148Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-19T21:29:03.672Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:29:06.209Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-19T21:29:06.214Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:29:08.810Z] Usuário João Marcelo (558598274259@c.us) digitou: "2"
+[2025-03-19T21:29:09.492Z] Sistema para João Marcelo (558598274259@c.us): Enviando prestação de contas referente a fevereiro de 2025:
+[2025-03-19T21:29:09.493Z] Erro para João Marcelo (558598274259@c.us): Erro ao enviar prestação de contas: ENOENT: no such file or directory, open 'C:\projects\CHATBOT\pdfs\contas\2025\02.fev\prestacao_contas.pdf'
+[2025-03-19T21:29:09.513Z] Sistema para João Marcelo (558598274259@c.us): Erro ao enviar o arquivo de prestação de contas

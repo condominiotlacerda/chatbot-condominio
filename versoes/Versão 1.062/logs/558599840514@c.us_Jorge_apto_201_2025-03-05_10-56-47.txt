@@ -1,0 +1,2 @@
+[2025-03-05T13:56:47.232Z] Usuário Jorge (558599840514@c.us) digitou: "S"
+[2025-03-05T13:56:47.314Z] Sistema para Jorge (558599840514@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

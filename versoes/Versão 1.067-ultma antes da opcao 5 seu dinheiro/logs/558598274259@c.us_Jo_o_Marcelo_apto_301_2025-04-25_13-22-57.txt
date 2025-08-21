@@ -1,0 +1,17 @@
+[2025-04-25T16:22:57.950Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-04-25T16:23:01.452Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-04-25T16:23:01.457Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+
+Para sair digite "sair" ou "s"
+[2025-04-25T16:23:10.297Z] Usuário João Marcelo (558598274259@c.us) digitou: "3"
+[2025-04-25T16:23:11.950Z] Arquivo enviado para João Marcelo (558598274259@c.us): notificacao_1_apto_301.pdf
+[2025-04-25T16:23:12.472Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-04-25T16:23:38.058Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-04-25T16:23:38.071Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

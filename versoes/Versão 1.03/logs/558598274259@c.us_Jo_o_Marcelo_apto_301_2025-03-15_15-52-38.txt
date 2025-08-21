@@ -1,0 +1,29 @@
+[2025-03-15T18:52:38.995Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-15T18:52:40.354Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-15T18:52:40.359Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+
+Para sair digite "sair" ou "s"
+[2025-03-15T18:52:50.078Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-15T18:52:50.721Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 15 de março de 2025:
+[2025-03-15T18:52:51.697Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-15T18:52:53.140Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-15T18:52:54.657Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-15T18:52:55.165Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-15T18:53:03.336Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-15T18:53:03.348Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+
+Para sair digite "sair" ou "s"
+[2025-03-15T18:53:06.137Z] Usuário João Marcelo (558598274259@c.us) digitou: "2"
+[2025-03-15T18:53:06.784Z] Sistema para João Marcelo (558598274259@c.us): Enviando prestação de contas referente a fevereiro de 2025:
+[2025-03-15T18:53:10.615Z] Arquivo enviado para João Marcelo (558598274259@c.us): prestacao_contas_fev_2025.pdf
+[2025-03-15T18:53:11.135Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-15T18:53:16.915Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-03-15T18:53:16.929Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

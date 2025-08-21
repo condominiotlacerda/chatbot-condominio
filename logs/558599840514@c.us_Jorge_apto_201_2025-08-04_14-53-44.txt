@@ -1,0 +1,51 @@
+[2025-08-04T17:53:44.581Z] Usuário Jorge (558599840514@c.us) digitou: "Oi"
+[2025-08-04T17:53:48.590Z] Arquivo enviado para Jorge (558599840514@c.us): Imagem lacerda_assistente.png enviada
+[2025-08-04T17:53:48.598Z] Sistema para Jorge (558599840514@c.us): Olá, Jorge! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+6 - Histórico
+
+Para sair digite "sair" ou "s"
+[2025-08-04T17:53:57.100Z] Usuário Jorge (558599840514@c.us) digitou: "2"
+[2025-08-04T17:53:57.144Z] Sistema para Jorge (558599840514@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-08-04T17:54:12.726Z] Usuário Jorge (558599840514@c.us) digitou: "8"
+[2025-08-04T17:54:14.536Z] Arquivo enviado para Jorge (558599840514@c.us): prestacao_contas_agosto_2025.pdf
+[2025-08-04T17:54:15.048Z] Sistema para Jorge (558599840514@c.us): 
+Digite 0 para voltar ao menu de meses ou "s" para sair.
+[2025-08-04T17:54:41.278Z] Usuário Jorge (558599840514@c.us) digitou: "0"
+[2025-08-04T17:54:41.296Z] Sistema para Jorge (558599840514@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-08-04T17:54:55.950Z] Usuário Jorge (558599840514@c.us) digitou: "S"
+[2025-08-04T17:54:55.967Z] Sistema para Jorge (558599840514@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

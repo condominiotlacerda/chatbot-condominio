@@ -1,0 +1,17 @@
+[2025-03-16T21:16:14.572Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-16T21:16:15.042Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-16T21:16:15.050Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-16T21:16:19.097Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-16T21:16:19.748Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10 de março de 2025:
+[2025-03-16T21:16:20.221Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-16T21:16:21.155Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-16T21:16:22.042Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-16T21:16:22.549Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.

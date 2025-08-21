@@ -1,0 +1,157 @@
+const qrcode = require('qrcode-terminal');
+const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+
+const client = new Client();
+
+client.on('qr', qr => {
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('ready', () => {
+    console.log('Tudo certo! WhatsApp conectado.');
+});
+
+client.initialize();
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+const estados = {};
+const temposLimite = {};
+
+client.on('message', async msg => {
+    const numeroTelefone = msg.from;
+
+    if (msg.body === 'sair' || msg.body === 'Sair' || msg.body === 'S' || msg.body === 's') {
+        delete estados[numeroTelefone];
+        delete temposLimite[numeroTelefone];
+        await client.sendMessage(msg.from, 'Você saiu da conversa. Se precisar de ajuda, digite "oi" para iniciar uma nova conversa.');
+        return;
+    }
+
+    if (msg.body && msg.body.trim().match(/^(oi|Olá|olá|ola|Ola)$/i)) {
+        estados[numeroTelefone] = 'on';
+        clearTimeout(temposLimite[numeroTelefone]);
+
+        temposLimite[numeroTelefone] = setTimeout(() => {
+            client.sendMessage(
+                numeroTelefone,
+                'Fim de conversa por inatividade. Se precisar de ajuda, digite "oi" para iniciar uma nova conversa.'
+            );
+            delete estados[numeroTelefone];
+            delete temposLimite[numeroTelefone];
+        }, 180000);
+
+        try {
+            const media = MessageMedia.fromFilePath('E:/PROGRAMAS/Microsoft Office 2010/T Lacerda TEMPORÁRIO/CHATBOT/IMAGENS/LACERDA.png');
+            await client.sendMessage(msg.from, media);
+        } catch (error) {
+            console.error("Erro ao enviar imagem:", error);
+            await client.sendMessage(msg.from, "Ocorreu um erro ao enviar a imagem.");
+        }
+
+        const contact = await msg.getContact();
+        const name = contact.pushname;
+
+        await client.sendMessage(msg.from, 'Olá, ' + name.split(". ")[0] + ' Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas\n\nPara sair da conversa digite sair ou s.');
+
+    } else {
+        if (estados[numeroTelefone]) {
+            clearTimeout(temposLimite[numeroTelefone]);
+            temposLimite[numeroTelefone] = setTimeout(() => {
+                client.sendMessage(
+                    numeroTelefone,
+                    'Fim de conversa por inatividade. Se precisar de ajuda, digite "oi" para iniciar uma nova conversa.'
+                );
+                delete estados[numeroTelefone];
+                delete temposLimite[numeroTelefone];
+            }, 180000);
+        }
+    }
+
+    if (msg.body !== null && msg.body === '1' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (estados[numeroTelefone] === 'on' || estados[numeroTelefone] === 'on0') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Clique nos links abaixo para baixar:\n\nBoletos com vencimento em 10/3/2025:');
+
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, '\n\nTaxa condominial: https://site.com\n\nTaxa acordo M2D: https://site.com\n\nFundo de reserva para urgência hidráulica/Elétrica: https://site.com');
+
+            estados[numeroTelefone] = 'menuPrincipalUm';
+
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Para retornar ao menu inicial digite 0');
+
+        } else if (estados[numeroTelefone] === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    if (msg.body !== null && msg.body === '2' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (estados[numeroTelefone] === 'on' || estados[numeroTelefone] === 'on0') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Clique no link abaixo para visualizar a prestação de contas referente a fevereiro de 2025:');
+
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+
+            try {
+                const localPath = path.join(__dirname, 'pdfs', 'prestacao_contas.pdf');
+
+                console.log('Usando o arquivo PDF existente no diretório pdfs...');
+                
+                try {
+                    const media = MessageMedia.fromFilePath(localPath);
+                    await client.sendMessage(msg.from, media, { sendMediaAsDocument: true, filename: 'prestacao_contas.pdf' });
+                    console.log('Arquivo PDF enviado com sucesso.');
+                } catch (error) {
+                    console.error('Erro ao enviar PDF:', error);
+                    await client.sendMessage(msg.from, "Ocorreu um erro ao enviar o arquivo PDF.");
+                }
+
+            } catch (error) {
+                console.error("Erro ao manipular o arquivo PDF:", error);
+                await client.sendMessage(msg.from, "Ocorreu um erro ao manipular o arquivo PDF.");
+            }
+
+            estados[numeroTelefone] = 'menuPrincipalDois';
+
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Para retornar ao menu inicial digite 0');
+
+        } else if (estados[numeroTelefone] === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    if (msg.body !== null && msg.body !== undefined && msg.body === '0' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (estados[numeroTelefone] === 'menuPrincipalUm' || estados[numeroTelefone] === 'menuPrincipalDois') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Menu principal.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas\n\nPara sair da conversa digite sair ou s.');
+
+            estados[numeroTelefone] = 'on0';
+
+        } else if (estados[numeroTelefone] === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+});

@@ -1,0 +1,63 @@
+[2025-07-07T16:19:10.887Z] Usuário Felipe Granja (558598271656@c.us) digitou: "Oi"
+[2025-07-07T16:19:14.618Z] Arquivo enviado para Felipe Granja (558598271656@c.us): Imagem lacerda_assistente.png enviada
+[2025-07-07T16:19:14.628Z] Sistema para Felipe Granja (558598271656@c.us): Olá, Felipe Granja! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-07-07T16:19:22.325Z] Usuário Felipe Granja (558598271656@c.us) digitou: "2"
+[2025-07-07T16:19:22.342Z] Sistema para Felipe Granja (558598271656@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-07-07T16:19:30.302Z] Usuário Felipe Granja (558598271656@c.us) digitou: "07"
+[2025-07-07T16:19:32.417Z] Arquivo enviado para Felipe Granja (558598271656@c.us): prestacao_contas_julho_2025.pdf
+[2025-07-07T16:19:32.940Z] Sistema para Felipe Granja (558598271656@c.us): 
+Digite 0 para voltar ao menu de meses ou "s" para sair.
+[2025-07-07T16:19:44.600Z] Usuário Felipe Granja (558598271656@c.us) digitou: "0"
+[2025-07-07T16:19:44.615Z] Sistema para Felipe Granja (558598271656@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-07-07T16:19:48.942Z] Usuário Felipe Granja (558598271656@c.us) digitou: "0"
+[2025-07-07T16:19:48.954Z] Sistema para Felipe Granja (558598271656@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-07-07T16:19:54.527Z] Usuário Felipe Granja (558598271656@c.us) digitou: "4"
+[2025-07-07T16:19:57.369Z] Arquivo enviado para Felipe Granja (558598271656@c.us): previsao_despesas.pdf
+[2025-07-07T16:19:57.888Z] Sistema para Felipe Granja (558598271656@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-07-07T16:22:57.899Z] Sistema para Felipe Granja (558598271656@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-07-07T16:22:57.906Z] Sistema para Felipe Granja (558598271656@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

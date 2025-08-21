@@ -1,0 +1,22 @@
+[2025-08-07T14:22:50.348Z] Usuário José Rocha (558597294028@c.us) digitou: "Oi"
+[2025-08-07T14:22:53.455Z] Arquivo enviado para José Rocha (558597294028@c.us): Imagem lacerda_assistente.png enviada
+[2025-08-07T14:22:53.466Z] Sistema para José Rocha (558597294028@c.us): Olá, José Rocha! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+6 - Histórico
+
+Para sair digite "sair" ou "s"
+[2025-08-07T14:23:07.328Z] Usuário José Rocha (558597294028@c.us) digitou: "1"
+[2025-08-07T14:23:07.844Z] Sistema para José Rocha (558597294028@c.us): Enviando 3 boletos para o apartamento 1:
+[2025-08-07T14:23:08.639Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_condominio_apto_1.pdf
+[2025-08-07T14:23:10.411Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_1_apto_1.pdf
+[2025-08-07T14:23:11.730Z] Arquivo enviado para José Rocha (558597294028@c.us): boleto_tx_2_apto_1.pdf
+[2025-08-07T14:23:12.247Z] Sistema para José Rocha (558597294028@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-08-07T14:26:12.268Z] Sistema para José Rocha (558597294028@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-08-07T14:26:12.291Z] Sistema para José Rocha (558597294028@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

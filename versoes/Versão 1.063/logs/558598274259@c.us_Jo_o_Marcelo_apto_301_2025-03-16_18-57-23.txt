@@ -1,0 +1,59 @@
+[2025-03-16T21:57:23.658Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-16T21:57:24.180Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-16T21:57:24.194Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-16T21:57:28.077Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-16T21:57:28.254Z] Sistema para João Marcelo (558598274259@c.us): Não há boletos do mês anterior. Próxima entrega: 07/04/2025
+[2025-03-16T21:57:28.269Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T21:57:59.010Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-16T21:57:59.022Z] Sistema para João Marcelo (558598274259@c.us): Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T21:58:05.832Z] Usuário João Marcelo (558598274259@c.us) digitou: "00"
+[2025-03-16T21:58:05.973Z] Sistema para João Marcelo (558598274259@c.us): Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T21:58:08.010Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-16T21:58:08.024Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-16T21:58:11.858Z] Usuário João Marcelo (558598274259@c.us) digitou: "2"
+[2025-03-16T21:58:12.505Z] Sistema para João Marcelo (558598274259@c.us): Enviando prestação de contas referente a fevereiro de 2025:
+[2025-03-16T21:58:13.836Z] Arquivo enviado para João Marcelo (558598274259@c.us): prestacao_contas_fev_2025.pdf
+[2025-03-16T21:58:14.345Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T21:58:19.009Z] Usuário João Marcelo (558598274259@c.us) digitou: "3"
+[2025-03-16T21:58:19.020Z] Sistema para João Marcelo (558598274259@c.us): Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T21:58:20.854Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-16T21:58:20.991Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-16T21:58:23.933Z] Usuário João Marcelo (558598274259@c.us) digitou: "3"
+[2025-03-16T21:58:23.946Z] Sistema para João Marcelo (558598274259@c.us): **Datas de entrega dos boletos em 2025:**
+
+janeiro: 07/02/2025
+fevereiro: 07/03/2025
+março: 07/04/2025
+abril: 07/05/2025
+maio: 08/06/2025
+junho: 07/07/2025
+julho: 07/08/2025
+agosto: 08/09/2025
+setembro: 07/10/2025
+outubro: 07/11/2025
+novembro: 08/12/2025
+dezembro: 07/01/2026
+
+[2025-03-16T21:58:23.955Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T21:58:28.895Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-03-16T21:58:28.905Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

@@ -1,0 +1,93 @@
+[2025-05-07T20:19:39.167Z] Usuário João Paulo (558586282980@c.us) digitou: "Oi"
+[2025-05-07T20:19:39.894Z] Arquivo enviado para João Paulo (558586282980@c.us): Imagem lacerda_assistente.png enviada
+[2025-05-07T20:19:39.900Z] Sistema para João Paulo (558586282980@c.us): Olá, João Paulo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-07T20:19:43.904Z] Usuário João Paulo (558586282980@c.us) digitou: "1"
+[2025-05-07T20:19:44.607Z] Sistema para João Paulo (558586282980@c.us): Enviando boletos do apartamento 1:
+[2025-05-07T20:19:44.904Z] Arquivo enviado para João Paulo (558586282980@c.us): boleto_tx_condominio_apto_1.pdf
+[2025-05-07T20:19:45.669Z] Arquivo enviado para João Paulo (558586282980@c.us): boleto_tx_1_apto_1.pdf
+[2025-05-07T20:19:46.389Z] Arquivo enviado para João Paulo (558586282980@c.us): boleto_tx_2_apto_1.pdf
+[2025-05-07T20:19:47.086Z] Arquivo enviado para João Paulo (558586282980@c.us): boleto_tx_3_apto_1.pdf
+[2025-05-07T20:19:47.600Z] Sistema para João Paulo (558586282980@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T20:20:24.706Z] Usuário João Paulo (558586282980@c.us) digitou: "0"
+[2025-05-07T20:20:24.721Z] Sistema para João Paulo (558586282980@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-07T20:20:34.200Z] Usuário João Paulo (558586282980@c.us) digitou: "2"
+[2025-05-07T20:20:34.395Z] Sistema para João Paulo (558586282980@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T20:20:41.950Z] Usuário João Paulo (558586282980@c.us) digitou: "4"
+[2025-05-07T20:20:43.668Z] Arquivo enviado para João Paulo (558586282980@c.us): prestacao_contas_abril_2025.pdf
+[2025-05-07T20:20:44.183Z] Sistema para João Paulo (558586282980@c.us): 
+Digite 0 para voltar ao menu de meses ou "s" para sair.
+[2025-05-07T20:20:48.708Z] Usuário João Paulo (558586282980@c.us) digitou: "0"
+[2025-05-07T20:20:48.722Z] Sistema para João Paulo (558586282980@c.us): Escolha o mês da prestação de contas:
+1 - Janeiro
+2 - Fevereiro
+3 - Março
+4 - Abril
+5 - Maio
+6 - Junho
+7 - Julho
+8 - Agosto
+9 - Setembro
+10 - Outubro
+11 - Novembro
+12 - Dezembro
+
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T20:20:52.288Z] Usuário João Paulo (558586282980@c.us) digitou: "0"
+[2025-05-07T20:20:52.481Z] Sistema para João Paulo (558586282980@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-07T20:20:59.679Z] Usuário João Paulo (558586282980@c.us) digitou: "3"
+[2025-05-07T20:21:01.276Z] Arquivo enviado para João Paulo (558586282980@c.us): notificacao_1_apto_1.pdf
+[2025-05-07T20:21:01.806Z] Sistema para João Paulo (558586282980@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T20:21:11.322Z] Usuário João Paulo (558586282980@c.us) digitou: "0"
+[2025-05-07T20:21:11.339Z] Sistema para João Paulo (558586282980@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Notificações
+4 - Previsão de despesas
+5 - Seu dinheiro
+
+Para sair digite "sair" ou "s"
+[2025-05-07T20:21:14.508Z] Usuário João Paulo (558586282980@c.us) digitou: "5"
+[2025-05-07T20:21:18.536Z] Arquivo enviado para João Paulo (558586282980@c.us): seu_dinheiro_1.pdf
+[2025-05-07T20:21:19.049Z] Sistema para João Paulo (558586282980@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-05-07T20:24:19.054Z] Sistema para João Paulo (558586282980@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-05-07T20:24:19.062Z] Sistema para João Paulo (558586282980@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

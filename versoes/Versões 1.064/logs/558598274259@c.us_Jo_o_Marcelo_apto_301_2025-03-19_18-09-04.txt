@@ -1,0 +1,35 @@
+[2025-03-19T21:09:04.121Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-19T21:09:04.477Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-19T21:09:04.482Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:09:13.132Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T21:09:13.357Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T21:09:13.803Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10/04/2025:
+[2025-03-19T21:09:13.895Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10/04/2025:
+[2025-03-19T21:09:14.541Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-19T21:09:14.587Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-19T21:09:15.510Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-19T21:09:15.548Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-19T21:09:16.556Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-19T21:09:16.578Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-19T21:09:17.068Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:09:17.098Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:09:22.456Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-19T21:09:22.470Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:09:22.717Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-19T21:09:22.869Z] Sistema para João Marcelo (558598274259@c.us): Opção inválida: "0". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Datas de entrega dos boletos ou "s" para sair.
+[2025-03-19T21:10:18.773Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-03-19T21:10:18.789Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

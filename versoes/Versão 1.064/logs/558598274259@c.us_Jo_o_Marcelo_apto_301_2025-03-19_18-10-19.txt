@@ -1,0 +1,2 @@
+[2025-03-19T21:10:19.183Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-03-19T21:10:19.375Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

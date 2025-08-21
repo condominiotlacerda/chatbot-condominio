@@ -1,0 +1,223 @@
+const qrcode = require('qrcode-terminal');
+const { Client, MessageMedia } = require('whatsapp-web.js');
+const path = require('path');
+
+// Configurações
+const CONFIG = {
+    TIMEOUT: 180000,
+    VALID_APARTMENTS: ['1', '101', '102', '201', '202', '301', '302', '401'],
+    BOLETO_TYPES: ['condominio', 'acordo_m2d', 'hidro_eletr'],
+    AUTHORIZED_USERS: {
+        '558586282980': { name: 'João Paulo', apartment: '1' },
+        '558588402222': { name: 'Lizandro', apartment: '101' },
+        '558598271656': { name: 'Felipe Granja', apartment: '102' },
+        '558599840514': { name: 'Jorge', apartment: '201' },
+        '558596540289': { name: 'Ângela', apartment: '201' },
+        '558598274259': { name: 'João Marcelo', apartment: '301' },
+        '553193318992': { name: 'Nica', apartment: '301' },
+        '558581837401': { name: 'Marcela', apartment: '301' },
+        '558589945558': { name: 'Suzane', apartment: '302' },
+        '558599339889': { name: 'Célia', apartment: '401' }
+    }
+};
+
+// Inicialização
+const client = new Client();
+const stateManager = {
+    states: {},
+    timeouts: {},
+    lastMessageIds: {}
+};
+
+// Utilitários
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const normalizeMessage = text => text?.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const normalizePhoneNumber = number => number.split('@')[0]; // Remove @c.us
+
+// Handlers
+const handlers = {
+    async resetConversation(userNumber) {
+        clearTimeout(stateManager.timeouts[userNumber]);
+        delete stateManager.states[userNumber];
+        delete stateManager.timeouts[userNumber];
+        delete stateManager.lastMessageIds[userNumber];
+        await client.sendMessage(userNumber, 'Você saiu da conversa. Digite "oi" para iniciar novamente.');
+    },
+
+    setTimeout(userNumber) {
+        clearTimeout(stateManager.timeouts[userNumber]);
+        stateManager.timeouts[userNumber] = setTimeout(async () => {
+            await client.sendMessage(userNumber, 'Fim de conversa por inatividade. Digite "oi" para iniciar novamente.');
+            handlers.resetConversation(userNumber);
+        }, CONFIG.TIMEOUT);
+    },
+
+    async sendUnauthorizedMessage(userNumber) {
+        await client.sendMessage(userNumber, 
+            `Este número (${userNumber}) não está autorizado. Por favor, entre em contato com o administrador da Assistente Virtual para cadastrar seu número.`
+        );
+    },
+
+    async sendMainMenu(userNumber, userInfo) {
+        stateManager.states[userNumber] = 'main_menu';
+        handlers.setTimeout(userNumber);
+        
+        try {
+            const media = MessageMedia.fromFilePath(path.join(__dirname, 'imagens', 'lacerda_assistente.png'));
+            await client.sendMessage(userNumber, media);
+        } catch (error) {
+            console.error("Erro ao enviar imagem:", error);
+            await client.sendMessage(userNumber, "Erro ao enviar imagem da Assistente Virtual.");
+        }
+
+        await client.sendMessage(userNumber, 
+            `Olá, ${userInfo.name}! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.\n\n` +
+            'Digite uma opção:\n1 - Boletos\n2 - Prestação de contas\n\nPara sair digite "sair" ou "s"'
+        );
+    },
+
+    async handleBoletos(userNumber, chat, apartment, userInfo) {
+        if (!CONFIG.VALID_APARTMENTS.includes(apartment)) {
+            await chat.sendStateTyping();
+            await delay(500);
+            await client.sendMessage(userNumber, 
+                'Apartamento inválido. Digite: ' + CONFIG.VALID_APARTMENTS.join(', ')
+            );
+            return;
+        }
+
+        if (userInfo.apartment !== apartment) {
+            await client.sendMessage(userNumber, 
+                `Você (${userInfo.name}) não está autorizado a acessar os boletos do apartamento ${apartment}.`
+            );
+            return;
+        }
+
+        await chat.sendStateTyping();
+        await delay(500);
+        await client.sendMessage(userNumber, `Enviando boletos do apartamento ${apartment} para março de 2025:`);
+
+        const boletosDir = path.join(__dirname, 'pdfs', 'boletos', '2025', '3.mar');
+        const isGroundFloor = apartment === '1';
+        
+        try {
+            const suffixes = isGroundFloor ? ['', 'a', 'b'] : [''];
+            for (const suffix of suffixes) {
+                for (const type of CONFIG.BOLETO_TYPES) {
+                    const filename = `boleto_tx_${type}_apto_${apartment}${suffix}.pdf`;
+                    const filePath = path.join(boletosDir, filename);
+                    
+                    try {
+                        const media = MessageMedia.fromFilePath(filePath);
+                        await client.sendMessage(userNumber, media, { 
+                            sendMediaAsDocument: true, 
+                            filename 
+                        });
+                        await delay(500);
+                    } catch (error) {
+                        console.error(`Erro ao enviar ${filename}:`, error);
+                        await client.sendMessage(userNumber, `Erro ao enviar ${filename}`);
+                    }
+                }
+            }
+            await client.sendMessage(userNumber, '\nPara voltar ao menu inicial digite 0');
+            stateManager.states[userNumber] = 'boletos_menu';
+        } catch (error) {
+            console.error("Erro ao processar boletos:", error);
+            await client.sendMessage(userNumber, "Erro ao processar boletos.");
+        }
+    },
+
+    async handleContas(userNumber, chat) {
+        await chat.sendStateTyping();
+        await delay(500);
+        await client.sendMessage(userNumber, 'Enviando prestação de contas referente a fevereiro de 2025:');
+
+        const contasPath = path.join(__dirname, 'pdfs', 'contas', '2025', '2.fev', 'prestacao_contas.pdf');
+        
+        try {
+            const media = MessageMedia.fromFilePath(contasPath);
+            await client.sendMessage(userNumber, media, { 
+                sendMediaAsDocument: true, 
+                filename: 'prestacao_contas_fev_2025.pdf' 
+            });
+            console.log('Prestação de contas enviada com sucesso.');
+            await delay(500);
+            await client.sendMessage(userNumber, '\nPara voltar ao menu inicial digite 0');
+            stateManager.states[userNumber] = 'contas_menu';
+        } catch (error) {
+            console.error("Erro ao enviar prestação de contas:", error);
+            await client.sendMessage(userNumber, "Erro ao enviar o arquivo de prestação de contas.");
+        }
+    }
+};
+
+// Configuração do cliente
+client.on('qr', qr => qrcode.generate(qr, { small: true }));
+client.on('ready', () => console.log('WhatsApp conectado!'));
+client.initialize();
+
+// Handler de mensagens
+client.on('message', async msg => {
+    const userNumber = msg.from;
+    const normalizedNumber = normalizePhoneNumber(userNumber);
+    const normalizedBody = normalizeMessage(msg.body);
+    const chat = await msg.getChat();
+    
+    // Log para depuração
+    console.log(`Número recebido: ${userNumber} | Normalizado: ${normalizedNumber}`);
+    
+    // Verificação de autorização
+    const userInfo = CONFIG.AUTHORIZED_USERS[normalizedNumber];
+    if (!userInfo) {
+        await handlers.sendUnauthorizedMessage(userNumber);
+        return;
+    }
+
+    if (stateManager.lastMessageIds[userNumber] === msg.id.id) return;
+    stateManager.lastMessageIds[userNumber] = msg.id.id;
+
+    if (['sair', 's'].includes(normalizedBody)) {
+        await handlers.resetConversation(userNumber);
+        return;
+    }
+
+    if (['oi', 'ola'].includes(normalizedBody)) {
+        await handlers.sendMainMenu(userNumber, userInfo);
+        return;
+    }
+
+    switch (stateManager.states[userNumber]) {
+        case 'main_menu':
+            if (normalizedBody === '1') {
+                stateManager.states[userNumber] = 'boletos_submenu';
+                await chat.sendStateTyping();
+                await delay(500);
+                await client.sendMessage(userNumber, 
+                    'Boletos com vencimento em 10/3/2025.\n\nDigite o número do apartamento: ' + 
+                    CONFIG.VALID_APARTMENTS.join(', ')
+                );
+            } else if (normalizedBody === '2') {
+                await handlers.handleContas(userNumber, chat);
+            }
+            break;
+
+        case 'boletos_submenu':
+            await handlers.handleBoletos(userNumber, chat, normalizedBody, userInfo);
+            break;
+
+        case 'boletos_menu':
+        case 'contas_menu':
+            if (normalizedBody === '0') {
+                await handlers.sendMainMenu(userNumber, userInfo);
+            }
+            break;
+
+        default:
+            await client.sendMessage(userNumber, 'Digite "oi" ou "ola" para iniciar!');
+    }
+
+    if (stateManager.states[userNumber]) {
+        handlers.setTimeout(userNumber);
+    }
+});

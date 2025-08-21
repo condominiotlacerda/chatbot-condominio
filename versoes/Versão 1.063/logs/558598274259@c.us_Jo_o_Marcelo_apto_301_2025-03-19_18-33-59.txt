@@ -1,0 +1,31 @@
+[2025-03-19T21:33:59.990Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-19T21:34:00.318Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-19T21:34:00.324Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:34:11.981Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T21:34:12.684Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10/04/2025:
+[2025-03-19T21:34:13.089Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-19T21:34:13.982Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-19T21:34:14.910Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-19T21:34:15.427Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:34:20.863Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-19T21:34:20.881Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:34:26.201Z] Usuário João Marcelo (558598274259@c.us) digitou: "2"
+[2025-03-19T21:34:26.881Z] Sistema para João Marcelo (558598274259@c.us): Enviando prestação de contas referente a fevereiro de 2025:
+[2025-03-19T21:34:30.193Z] Arquivo enviado para João Marcelo (558598274259@c.us): prestacao_contas_fevereiro_2025.pdf
+[2025-03-19T21:34:30.707Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:34:50.627Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-03-19T21:34:50.646Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

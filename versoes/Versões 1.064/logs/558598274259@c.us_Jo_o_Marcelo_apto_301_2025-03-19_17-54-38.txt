@@ -1,0 +1,16 @@
+[2025-03-19T20:54:38.931Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-19T20:54:39.278Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-19T20:54:39.285Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T20:54:41.625Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T20:54:42.285Z] Sistema para João Marcelo (558598274259@c.us): Não há boletos para o período atual. Próxima entrega a partir de: 07/04/2025
+[2025-03-19T20:54:42.299Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T20:55:02.190Z] Usuário João Marcelo (558598274259@c.us) digitou: "S"
+[2025-03-19T20:55:02.209Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

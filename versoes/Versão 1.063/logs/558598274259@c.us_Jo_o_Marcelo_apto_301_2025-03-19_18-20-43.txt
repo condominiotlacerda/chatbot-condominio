@@ -1,0 +1,30 @@
+[2025-03-19T21:20:43.829Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-19T21:20:44.238Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-19T21:20:44.244Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:20:47.196Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T21:20:47.920Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10/04/2025:
+[2025-03-19T21:20:48.317Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_condominio_apto_301.pdf
+[2025-03-19T21:20:49.323Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-19T21:20:50.063Z] Arquivo enviado para João Marcelo (558598274259@c.us): boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-19T21:20:50.572Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:20:54.638Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-19T21:20:54.653Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:20:59.308Z] Usuário João Marcelo (558598274259@c.us) digitou: "2"
+[2025-03-19T21:21:00.011Z] Sistema para João Marcelo (558598274259@c.us): Enviando prestação de contas referente a fevereiro de 2025:
+[2025-03-19T21:21:00.013Z] Erro para João Marcelo (558598274259@c.us): Erro ao enviar prestação de contas: ENOENT: no such file or directory, open 'C:\projects\CHATBOT\pdfs\contas\2025\02.fev\prestacao_contas.pdf'
+[2025-03-19T21:21:00.033Z] Sistema para João Marcelo (558598274259@c.us): Erro ao enviar o arquivo de prestação de contas
+[2025-03-19T21:24:00.051Z] Sistema para João Marcelo (558598274259@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-03-19T21:24:00.058Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

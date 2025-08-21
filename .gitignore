@@ -1,0 +1,7 @@
+# Pastas e arquivos que não devem ser enviados para o GitHub
+.bfg-report/
+chatbot-condominio.git/
+condominiotlacerda/
+git/
+node_modules/
+.env

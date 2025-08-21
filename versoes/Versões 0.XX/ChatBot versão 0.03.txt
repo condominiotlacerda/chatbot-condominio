@@ -1,0 +1,117 @@
+// leitor de qr code
+const qrcode = require('qrcode-terminal');
+const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js');
+const client = new Client();
+
+client.on('qr', qr => {
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('ready', () => {
+    console.log('Tudo certo! WhatsApp conectado.');
+});
+
+client.initialize();
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+let status = 'off';
+
+client.on('message', async msg => {
+
+    if (msg.body.match(/(oi|Oi|Olá|olá|ola|Ola)/i) && status === 'off' && msg.from.endsWith('@c.us')) {
+
+        status = 'on';
+
+        const chat = await msg.getChat();
+
+        await delay(1000);
+        await chat.sendStateTyping();
+        await delay(2000);
+        const contact = await msg.getContact();
+        const name = contact.pushname;
+
+        try {
+            const media = MessageMedia.fromFilePath('E:/PROGRAMAS/Microsoft Office 2010/T LACERDA TEMPORÁRIO/CHATBOT/IMAGENS/LACERDA.png'); // Substitua pelo caminho real
+            await client.sendMessage(msg.from, media);
+        } catch (error) {
+            console.error("Erro ao enviar imagem:", error);
+            await client.sendMessage(msg.from, "Ocorreu um erro ao enviar a imagem.");
+        }
+
+        await client.sendMessage(msg.from, 'Olá, ' + name.split(". ")[0] + ' Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas');
+
+    } else if (msg.body.match(/(oi|Oi|Olá|olá|ola|Ola)/i) && status === 'on0' && msg.from.endsWith('@c.us')) {
+        await delay(1000);
+        await chat.sendStateTyping();
+        await delay(2000);
+        await client.sendMessage(msg.from, 'Digite o número correspondente à opção desejada.');
+    }
+
+    if (msg.body !== null && msg.body === '1' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (status === 'on' || status === 'on0') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Clique nos links abaixo para baixar:\n\nBoletos com vencimento em 10/3/2025:');
+
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, '\n\nTaxa condominial: https://site.com\n\nTaxa acordo M2D: https://site.com\n\nFundo de reserva para urgência hidráulica/Elétrica: https://site.com');
+
+            status = 'menuPrincipalUm';
+
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Para retornar ao menu inicial digite 0');
+
+        } else if (status === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    if (msg.body !== null && msg.body === '2' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (status === 'on' || status === 'on0') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Clique no link abaixo para baixar:\n\nPrestação de contas referente a 2/2025:');
+
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Arquivo pdf: https://site.com');
+
+            status = 'menuPrincipalDois';
+
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Para retornar ao menu inicial digite 0');
+
+        } else if (status === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    if (msg.body !== null && msg.body === '0' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (status === 'menuPrincipalUm' || status === 'menuPrincipalDois') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Menu principal.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas');
+
+            status = 'on0';
+
+        } else if (status === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+});

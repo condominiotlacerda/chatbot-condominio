@@ -1,0 +1,21 @@
+[2025-03-16T13:55:24.443Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-16T13:55:24.990Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-16T13:55:25.001Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+
+Para sair digite "sair" ou "s"
+[2025-03-16T13:56:18.564Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-16T13:56:19.237Z] Sistema para João Marcelo (558598274259@c.us): Enviando boletos do apartamento 301 com vencimento em 10 de undefined de undefined:
+[2025-03-16T13:56:19.238Z] Erro para João Marcelo (558598274259@c.us): Erro ao enviar boleto_tx_condominio_apto_301.pdf: ENOENT: no such file or directory, open 'C:\projects\CHATBOT\pdfs\boletos\undefined\undefined.undefined\boleto_tx_condominio_apto_301.pdf'
+[2025-03-16T13:56:19.252Z] Sistema para João Marcelo (558598274259@c.us): Erro ao enviar boleto_tx_condominio_apto_301.pdf
+[2025-03-16T13:56:19.253Z] Erro para João Marcelo (558598274259@c.us): Erro ao enviar boleto_tx_acordo_m2d_apto_301.pdf: ENOENT: no such file or directory, open 'C:\projects\CHATBOT\pdfs\boletos\undefined\undefined.undefined\boleto_tx_acordo_m2d_apto_301.pdf'
+[2025-03-16T13:56:19.262Z] Sistema para João Marcelo (558598274259@c.us): Erro ao enviar boleto_tx_acordo_m2d_apto_301.pdf
+[2025-03-16T13:56:19.263Z] Erro para João Marcelo (558598274259@c.us): Erro ao enviar boleto_tx_hidro_eletr_apto_301.pdf: ENOENT: no such file or directory, open 'C:\projects\CHATBOT\pdfs\boletos\undefined\undefined.undefined\boleto_tx_hidro_eletr_apto_301.pdf'
+[2025-03-16T13:56:19.269Z] Sistema para João Marcelo (558598274259@c.us): Erro ao enviar boleto_tx_hidro_eletr_apto_301.pdf
+[2025-03-16T13:56:19.275Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-16T13:59:19.293Z] Sistema para João Marcelo (558598274259@c.us): Fim de conversa por inatividade. Digite "oi" para iniciar novamente.
+[2025-03-16T13:59:19.303Z] Sistema para João Marcelo (558598274259@c.us): Você saiu da conversa. Digite "oi" para iniciar novamente.

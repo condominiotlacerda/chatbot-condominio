@@ -1,0 +1,243 @@
+const qrcode = require('qrcode-terminal');
+const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+
+const client = new Client();
+
+client.on('qr', qr => {
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('ready', () => {
+    console.log('Tudo certo! WhatsApp conectado.');
+});
+
+client.initialize();
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+const estados = {};
+const temposLimite = {};
+let ultimaMensagemId = {}; // Armazena o ID da última mensagem que mudou o estado
+
+client.on('message', async msg => {
+    const userNumber = msg.from;
+
+    // Normaliza a mensagem: remove espaços, acentos e converte para minúsculas
+    if (msg.body) {
+        msg.body = msg.body.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // Comando para sair
+    const exitCommands = ['sair', 's'];
+    if (msg.body && exitCommands.includes(msg.body)) {
+        delete estados[userNumber];
+        delete temposLimite[userNumber];
+        delete ultimaMensagemId[userNumber];
+        await client.sendMessage(userNumber, 'Você saiu da conversa. Se precisar de ajuda, digite "oi" para iniciar uma nova conversa.');
+        return;
+    }
+
+    // Comando para iniciar a conversa
+    const startCommands = ['oi', 'ola'];
+    if (msg.body && startCommands.includes(msg.body)) {
+        estados[userNumber] = 'main_menu';
+        clearTimeout(temposLimite[userNumber]);
+
+        temposLimite[userNumber] = setTimeout(() => {
+            client.sendMessage(
+                userNumber,
+                'Fim de conversa por inatividade. Se precisar de ajuda, digite "oi" para iniciar uma nova conversa.'
+            );
+            delete estados[userNumber];
+            delete temposLimite[userNumber];
+            delete ultimaMensagemId[userNumber];
+        }, 180000);
+
+        try {
+            const media = MessageMedia.fromFilePath(path.join(__dirname, 'imagens', 'lacerda_assistente.png'));
+            await client.sendMessage(userNumber, media);
+        } catch (error) {
+            console.error("Erro ao enviar imagem:", error);
+            await client.sendMessage(userNumber, "Ocorreu um erro ao enviar a imagem da Assistente Virtual.");
+        }
+
+        const contact = await msg.getContact();
+        const name = contact.pushname || 'Usuário';
+
+        await client.sendMessage(userNumber, 'Olá, ' + name.split(". ")[0] + ' Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas\n\nPara sair da conversa digite sair ou s.');
+        ultimaMensagemId[userNumber] = msg.id.id; // Registra o ID da mensagem que iniciou
+    } else if (estados[userNumber]) {
+        // Redefine o tempo limite para estados ativos
+        clearTimeout(temposLimite[userNumber]);
+        temposLimite[userNumber] = setTimeout(() => {
+            client.sendMessage(
+                userNumber,
+                '\nFim de conversa por inatividade. Se precisar de ajuda, digite "oi" para iniciar uma nova conversa.'
+            );
+            delete estados[userNumber];
+            delete temposLimite[userNumber];
+            delete ultimaMensagemId[userNumber];
+        }, 180000);
+    }
+
+    // Opção 1: Boletos (com submenu)
+    if (msg.body === '1' && userNumber.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (estados[userNumber] === 'main_menu') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(userNumber, 'Boletos com vencimento em 10/3/2025.\n\nDigite o número do seu apartamento: 1, 101, 102, 201, 202, 301, 302, 401');
+            
+            estados[userNumber] = 'boletos_submenu';
+            ultimaMensagemId[userNumber] = msg.id.id; // Registra o ID do "1" que entrou no submenu
+        } else if (!estados[userNumber]) {
+            await client.sendMessage(userNumber, '\nSe quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    // Processamento do submenu de boletos
+    if (estados[userNumber] === 'boletos_submenu' && userNumber.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+        const validApartments = ['1', '101', '102', '201', '202', '301', '302', '401'];
+
+        // Ignora a mensagem que mudou o estado para 'boletos_submenu'
+        if (msg.id.id === ultimaMensagemId[userNumber]) {
+            return; // Sai sem processar a mensagem que mudou o estado
+        }
+
+        if (validApartments.includes(msg.body)) {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(userNumber, `Enviando boletos do apartamento ${msg.body} para março de 2025:`);
+
+            const apartmentNumber = msg.body;
+            const boletosDir = path.join(__dirname, 'pdfs', 'boletos', '2025', '3.mar');
+
+            try {
+                // Caso especial para apartamento 1 (3 moradores)
+                if (apartmentNumber === '1') {
+                    const suffixes = ['', 'a', 'b'];
+                    for (const suffix of suffixes) {
+                        const boletoTypes = [
+                            `boleto_tx_condominio_apto_1${suffix}.pdf`,
+                            `boleto_tx_acordo_m2d_apto_1${suffix}.pdf`,
+                            `boleto_tx_hidro_eletr_apto_1${suffix}.pdf`
+                        ];
+
+                        for (const boleto of boletoTypes) {
+                            const boletoPath = path.join(boletosDir, boleto);
+                            try {
+                                const media = MessageMedia.fromFilePath(boletoPath);
+                                await client.sendMessage(userNumber, media, { sendMediaAsDocument: true, filename: boleto });
+                                console.log(`Arquivo ${boleto} enviado com sucesso.`);
+                                await delay(500);
+                            } catch (error) {
+                                console.error(`Erro ao enviar ${boleto}:`, error);
+                                await client.sendMessage(userNumber, `Ocorreu um erro ao enviar o arquivo ${boleto}.`);
+                            }
+                        }
+                    }
+                } else {
+                    // Outros apartamentos (101, 102, etc.)
+                    const boletoTypes = [
+                        `boleto_tx_condominio_apto_${apartmentNumber}.pdf`,
+                        `boleto_tx_acordo_m2d_apto_${apartmentNumber}.pdf`,
+                        `boleto_tx_hidro_eletr_apto_${apartmentNumber}.pdf`
+                    ];
+
+                    for (const boleto of boletoTypes) {
+                        const boletoPath = path.join(boletosDir, boleto);
+                        try {
+                            const media = MessageMedia.fromFilePath(boletoPath);
+                            await client.sendMessage(userNumber, media, { sendMediaAsDocument: true, filename: boleto });
+                            console.log(`Arquivo ${boleto} enviado com sucesso.`);
+                            await delay(500);
+                        } catch (error) {
+                            console.error(`Erro ao enviar ${boleto}:`, error);
+                            await client.sendMessage(userNumber, `Ocorreu um erro ao enviar o arquivo ${boleto}.`);
+                        }
+                    }
+                }
+
+                await chat.sendStateTyping();
+                await delay(2000);
+                await client.sendMessage(userNumber, '\nPara retornar ao menu inicial digite 0');
+                estados[userNumber] = 'boletos_menu';
+
+            } catch (error) {
+                console.error("Erro ao processar boletos:", error);
+                await client.sendMessage(userNumber, "Ocorreu um erro ao processar os boletos.");
+            }
+        } else if (msg.body !== '0' && msg.body !== 'sair' && msg.body !== 's') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(userNumber, 'Número de apartamento inválido. Por favor, digite um dos seguintes: 1, 101, "102, 201, 202, 301, 302, 401');
+        }
+    }
+
+    // Opção 2: Prestação de contas
+    if (msg.body === '2' && userNumber.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (estados[userNumber] === 'main_menu') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(userNumber, 'Prestação de contas referente a fevereiro de 2025:');
+
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+
+            try {
+                const localPath = path.join(__dirname, 'pdfs', 'contas', '2025', '2.fev', 'prestacao_contas.pdf');
+
+                console.log('Usando o arquivo PDF existente no diretório pdfs/contas/2025/2.fev.');
+
+                try {
+                    const media = MessageMedia.fromFilePath(localPath);
+                    await client.sendMessage(userNumber, media, { sendMediaAsDocument: true, filename: 'prestacao_contas.pdf' });
+                    console.log('Arquivo PDF enviado com sucesso.');
+                } catch (error) {
+                    console.error('Erro ao enviar PDF:', error);
+                    await client.sendMessage(userNumber, "Ocorreu um erro ao enviar o arquivo PDF.");
+                }
+
+            } catch (error) {
+                console.error("Erro ao manipular o arquivo PDF:", error);
+                await client.sendMessage(userNumber, "Ocorreu um erro ao manipular o arquivo PDF.");
+            }
+
+            estados[userNumber] = 'contas_menu';
+
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(userNumber, '\nPara retornar ao menu inicial digite 0');
+        } else if (!estados[userNumber]) {
+            await client.sendMessage(userNumber, '\nSe quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    // Opção 0: Retornar ao menu principal
+    if (msg.body === '0' && userNumber.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (estados[userNumber] === 'boletos_menu' || estados[userNumber] === 'contas_menu') {
+            await delay(1000);
+            await chat.sendStateTyping();
+            await delay(2000);
+            await client.sendMessage(userNumber, 'Menu principal.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas\n\nPara sair da conversa digite sair ou s.');
+
+            estados[userNumber] = 'main_menu';
+        } else if (!estados[userNumber]) {
+            await client.sendMessage(userNumber, '\nSe quiser iniciar uma nova conversa digite oi ou ola.');
+        }
+    }
+});

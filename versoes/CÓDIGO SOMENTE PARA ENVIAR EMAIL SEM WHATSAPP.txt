@@ -1,0 +1,95 @@
+// CÓDIGO PARA TENTAR ENVIAR DO GRUPO DO ZAP PARA EMAIL
+
+const qrcode = require('qrcode-terminal');
+const { Client, LocalAuth } = require('whatsapp-web.js'); // Importe LocalAuth
+const nodemailer = require('nodemailer');
+
+const client = new Client({
+    authStrategy: new LocalAuth({ clientId: 'client-one' }), // Use LocalAuth
+    puppeteer: {
+        headless: true, // Modo headless (sem interface gráfica)
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-compositing',
+            '--disable-gpu'
+        ]
+    }
+});
+
+client.on('qr', qr => {
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('authenticated', () => {
+    console.log('Autenticado!');
+});
+
+client.on('ready', () => {
+    console.log('WhatsApp conectado!');
+});
+
+// Configuração do e-mail
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'condominiotlacerda@gmail.com',
+        pass: 'jnjjvjnvuhyaohuq' // Sua senha de app
+    }
+});
+
+const groupId = '120363020330011748@g.us';
+
+client.on('message', async msg => {
+    console.log('Mensagem recebida:', msg.body);
+
+    try {
+        if (msg.from === groupId) {
+            console.log('Mensagem do grupo correto:', msg.body);
+
+            const mailOptions = {
+                from: 'condominiotlacerda@gmail.com',
+                to: 'sgtjoaomarcelo@gmail.com',
+                subject: 'Nova mensagem no grupo lua fãs ',
+                text: msg.body
+            };
+
+            console.log('Tentando enviar e-mail...');
+
+            const info = await transporter.sendMail(mailOptions);
+            console.log('E-mail enviado:', info.response);
+        }
+    } catch (error) {
+        console.error('Erro ao processar mensagem:', error);
+    }
+});
+
+client.initialize();
+
+// CÓDIGO FUNCIONAL SERVE APENAS PARA MANDAR EMAIL
+
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'condominiotlacerda@gmail.com', // Seu e-mail
+        pass: 'jnjjvjnvuhyaohuq' // Sua senha de app (gerada no passo 1)
+    }
+});
+
+const mailOptions = {
+    from: 'condominiotlacerda@gmail.com',
+    to: 'sgtjoaomarcelo@gmail.com',
+    subject: 'Teste de envio de e-mail',
+    text: 'Este é um e-mail de teste.'
+};
+
+transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        console.error('Erro ao enviar e-mail:', error);
+    } else {
+        console.log('E-mail enviado:', info.response);
+    }
+});

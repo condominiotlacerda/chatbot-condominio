@@ -1,0 +1,2 @@
+[2025-08-07T14:26:27.491Z] Usuário José Rocha (558597294028@c.us) digitou: "Sim."
+[2025-08-07T14:26:27.510Z] Sistema para José Rocha (558597294028@c.us): Digite "oi" ou "ola" para iniciar!

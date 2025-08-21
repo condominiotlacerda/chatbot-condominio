@@ -1,0 +1,26 @@
+[2025-03-19T21:43:27.851Z] Usuário João Marcelo (558598274259@c.us) digitou: "Oi"
+[2025-03-19T21:43:28.148Z] Arquivo enviado para João Marcelo (558598274259@c.us): Imagem lacerda_assistente.png enviada
+[2025-03-19T21:43:28.156Z] Sistema para João Marcelo (558598274259@c.us): Olá, João Marcelo! Eu sou a Lacerda, assistente virtual do Condomínio T Lacerda.
+
+Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:43:29.976Z] Usuário João Marcelo (558598274259@c.us) digitou: "1"
+[2025-03-19T21:43:30.652Z] Sistema para João Marcelo (558598274259@c.us): Não há boletos para o período atual. Próxima entrega a partir de: 07/05/2025
+[2025-03-19T21:43:30.657Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.
+[2025-03-19T21:43:33.927Z] Usuário João Marcelo (558598274259@c.us) digitou: "0"
+[2025-03-19T21:43:33.939Z] Sistema para João Marcelo (558598274259@c.us): Digite uma opção:
+1 - Boletos
+2 - Prestação de contas
+3 - Datas de entrega dos boletos
+
+Para sair digite "sair" ou "s"
+[2025-03-19T21:43:35.864Z] Usuário João Marcelo (558598274259@c.us) digitou: "2"
+[2025-03-19T21:43:36.497Z] Sistema para João Marcelo (558598274259@c.us): Enviando prestação de contas referente a março de 2025:
+[2025-03-19T21:43:37.649Z] Arquivo enviado para João Marcelo (558598274259@c.us): prestacao_contas_março_2025.pdf
+[2025-03-19T21:43:38.158Z] Sistema para João Marcelo (558598274259@c.us): 
+Digite 0 para voltar ao menu inicial ou "s" para sair.

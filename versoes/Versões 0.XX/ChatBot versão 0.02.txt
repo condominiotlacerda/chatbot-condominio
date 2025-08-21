@@ -1,0 +1,110 @@
+// leitor de qr code
+const qrcode = require('qrcode-terminal');
+const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js'); // Mudança Buttons
+const client = new Client();
+// serviço de leitura do qr code
+client.on('qr', qr => {
+    qrcode.generate(qr, { small: true });
+});
+// apos isso ele diz que foi tudo certo
+client.on('ready', () => {
+    console.log('Tudo certo! WhatsApp conectado.');
+});
+// E inicializa tudo 
+client.initialize();
+
+const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
+
+// Funil
+
+let status = 'off'; // Variável global que armazena o status
+
+client.on('message', async msg => {
+
+    if (msg.body.match(/(menu|Menu|dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola)/i) && status === 'off' && msg.from.endsWith('@c.us')) {
+        
+        status = 'on'; // Se alguma palavra-chave for encontrada, o status é alterado para 'on'
+
+        const chat = await msg.getChat();
+
+        await delay(1000); //delay de 3 segundos
+        await chat.sendStateTyping(); // Simulando Digitação
+        await delay(2000); //Delay de 3000 milisegundos mais conhecido como 3 segundos
+        const contact = await msg.getContact(); //Pegando o contato
+        const name = contact.pushname; //Pegando o nome do contato
+        await client.sendMessage(msg.from, 'Olá, ' + name.split(". ")[0] + ' Eu sou a Lalá, assistente virtual do Condomínio T Lacerda.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Valores dos planos'); //Primeira mensagem de texto
+    
+    } else if (msg.body.match(/(menu|Menu|dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola)/i) && status === 'on0' && msg.from.endsWith('@c.us')) {
+        await delay(1000); //Delay de 3000 milisegundos mais conhecido como 3 segundos
+        await chat.sendStateTyping(); // Simulando Digitação
+        await delay(2000);
+        await client.sendMessage(msg.from, 'Digite o número correspondente à opção desejada.'); // Primeira mensagem de text
+    }
+
+    if (msg.body !== null && msg.body === '1' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (status === 'on' || status === 'on0') {
+            await delay(1000); //delay de 3 segundos
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Escolha o ano do Boleto');
+
+            await delay(1000); //delay de 3 segundos
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Link para cadastro: https://site.com');
+
+            status = 'menuPrincipalUm';
+
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, '\n\nPara retornar ao menu inicial digite 0');
+
+        } else if (status === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    if (msg.body !== null && msg.body === '2' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (status === 'on' || status === 'on0') {
+            await delay(1000); //Delay de 3000 milisegundos mais conhecido como 3 segundos
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, '*Escolha o ano da Prestação de Contas.');
+
+            await delay(1000); //delay de 3 segundos
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Link para cadastro: https://site.com');
+
+            status = 'menuPrincipalDois';
+
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, '\n\nPara retornar ao menu inicial digite 0');
+
+        } else if (status === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+    if (msg.body !== null && msg.body === '0' && msg.from.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+
+        if (status === 'menuPrincipalUm' || status === 'menuPrincipalDois') {
+            await delay(1000); //Delay de 3000 milisegundos mais conhecido como 3 segundos
+            await chat.sendStateTyping(); // Simulando Digitação
+            await delay(2000);
+            await client.sendMessage(msg.from, 'Menu principal.\n\nDigite uma das opções:\n\n1 - Boletos\n2 - Prestação de contas'); //Primeira mensagem de texto
+
+            status = 'on0';
+
+        } else if (status === 'off') {
+            await client.sendMessage(msg.from, 'Se quiser iniciar nossa conversa digite oi ou ola.');
+        }
+    }
+
+});
