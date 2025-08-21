@@ -2,6 +2,8 @@
 const express = require('express');
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+const path = require('path');
+const fs = require('fs');
 
 // Importando o pacote puppeteer-core e o navegador Chromium
 const puppeteer = require('puppeteer-core');
@@ -22,67 +24,11 @@ app.get('/', (req, res) => {
     });
 });
 
-// Inicializando o cliente do WhatsApp
-const client = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu',
-            '--single-process', // Necessário para o Render
-        ],
-        executablePath: '/usr/bin/chromium-browser',
-    }
-});
-
-client.on('qr', (qr) => {
-    // Gerando o QR Code para autenticação
-    console.log('QR Code recebido. Leia com seu telefone:');
-    qrcode.generate(qr, { small: true });
-});
-
-client.on('ready', () => {
-    console.log('Cliente do WhatsApp está pronto!');
-});
-
-client.on('message', async message => {
-    // Verifique se a mensagem é "olá" ou "olá bot" (não sensível a maiúsculas e minúsculas)
-    if (message.body.toLowerCase() === 'olá' || message.body.toLowerCase() === 'olá bot') {
-        // Obtenha o contato que enviou a mensagem
-        const contact = await message.getContact();
-        
-        // Obtenha o nome do contato
-        const contactName = contact.pushname || contact.id.user;
-
-        // Responda com uma mensagem de saudação personalizada
-        message.reply(`Olá, ${contactName}! Sou um chatbot em teste. Como posso ajudar?`);
-    } else if (message.body.toLowerCase() === '!midia') {
-        // Enviar uma imagem de teste
-        const media = await MessageMedia.fromUrl('https://i.imgur.com/kS5J1wV.png');
-        client.sendMessage(message.from, media, { caption: 'Esta é uma imagem de teste!' });
-    }
-});
-
-// Iniciando o servidor Express
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-});
-
-// Inicialize o cliente
-client.initialize();
-
-
 // Configurações
 const CONFIG = {
     TIMEOUT: 180000,
     VALID_APARTMENTS: ['1', '101', '102', '201', '202', '301', '302', '401'],
-    BOLETO_TYPES: ['condominio', '1', '2', '3'], // Atualizei para refletir a nova nomenclatura
+    BOLETO_TYPES: ['condominio', '1', '2', '3'],
     AUTHORIZED_USERS: {
         '558586282980': { name: 'João Paulo', apartment: '1' },
         '558597294028': { name: 'José Rocha', apartment: '1' },
@@ -99,9 +45,6 @@ const CONFIG = {
 };
 
 // Inicialização
-const client = new Client({
-    authStrategy: new LocalAuth()
-});
 const stateManager = {
     states: {},
     timeouts: {},
@@ -278,7 +221,7 @@ const handlers = {
             console.error('Erro ao ler ou processar o arquivo de boletos:', error);
             await client.sendMessage(userNumber, 'Ocorreu um erro ao processar os boletos. Por favor, tente novamente mais tarde.');
             logInteraction(userNumber, userInfo, `Erro ao ler ou processar o arquivo de boletos: ${error.message}`, 'error');
-            stateManager.states[userNumber] = 'main_menu'; // Ou 'boletos_menu' se preferir voltar ao menu de boletos
+            stateManager.states[userNumber] = 'main_menu';
         }
     },
 
@@ -293,7 +236,7 @@ const handlers = {
         for (let i = 0; i < meses.length; i++) {
             message += `${i + 1} - ${meses[i]}\n`;
         }
-        message += '\nDigite 0 para voltar ao menu inicial ou "s" para sair.'; // Voltar ao menu INICIAL inicialmente
+        message += '\nDigite 0 para voltar ao menu inicial ou "s" para sair.';
         await client.sendMessage(userNumber, message);
         logInteraction(userNumber, userInfo, message, 'system_message');
     },
@@ -306,7 +249,7 @@ const handlers = {
         const nomeMeses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 
         if (mesSelecionado >= 1 && mesSelecionado <= 12) {
-            const numeroMes = mesSelecionado.toString(); // Removi o padStart
+            const numeroMes = mesSelecionado.toString();
             const nomeMesPasta = nomeMeses[mesSelecionado - 1].substring(0, 3);
             const mesPastaCompleta = `${numeroMes}.${nomeMesPasta}`;
             const contasPath = path.join(__dirname, 'pdfs', 'contas', String(anoAtual), mesPastaCompleta, 'prestacao_contas.pdf');
@@ -321,10 +264,10 @@ const handlers = {
                 });
                 logInteraction(userNumber, userInfo, filename, 'file_sent');
                 await delay(500);
-                const optionsMessage = '\nDigite 0 para voltar ao menu de meses ou "s" para sair.'; // Voltar ao menu de MESES agora
+                const optionsMessage = '\nDigite 0 para voltar ao menu de meses ou "s" para sair.';
                 await client.sendMessage(userNumber, optionsMessage);
                 logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
-                stateManager.states[userNumber] = 'contas_navigation'; // Novo estado
+                stateManager.states[userNumber] = 'contas_navigation';
             } catch (error) {
                 logInteraction(userNumber, userInfo, `Erro ao enviar prestação de contas de ${nomeMesPorExtenso}: ${error.message}`, 'error');
                 await client.sendMessage(userNumber, `Erro ao enviar a prestação de contas de ${nomeMesPorExtenso}. Verifique se o arquivo existe.`);
@@ -423,10 +366,28 @@ const handlers = {
     }
 };
 
+// Inicializando o cliente do WhatsApp
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu',
+            '--single-process', // Necessário para o Render
+        ],
+        executablePath: '/usr/bin/chromium-browser',
+    }
+});
+
 // Configuração do cliente
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
 client.on('ready', () => console.log('WhatsApp conectado!'));
-client.initialize();
 
 // Handler de mensagens
 client.on('message', async msg => {
@@ -498,7 +459,7 @@ client.on('message', async msg => {
                 await client.sendMessage(userNumber, submenuMessage);
                 logInteraction(userNumber, userInfo, 'Exibiu submenu Seu dinheiro', 'system_message');
                 stateManager.states[userNumber] = 'seu_dinheiro_submenu';
-            } else if (normalizedBody === '6') { // Adição da nova opção
+            } else if (normalizedBody === '6') {
                 await handlers.handleHistorico(userNumber, chat, userInfo);
             } else {
                 const invalidMessage = `Opção inválida: "${msg.body}". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Notificações, 4 para Previsão de despesas, 5 para Seu dinheiro, 6 para Histórico ou "s" para sair.`;
@@ -560,9 +521,9 @@ client.on('message', async msg => {
         case 'boletos_menu':
         case 'contas_menu':
         case 'notificacoes_menu':
-        case 'previsao_despesas_menu': // Adicionado para manter o padrão de retorno
-        case 'seu_dinheiro_menu': // Adicionado para manter o padrão de retorno
-        case 'historico_menu': // Novo estado para o menu de histórico
+        case 'previsao_despesas_menu':
+        case 'seu_dinheiro_menu':
+        case 'historico_menu':
             if (normalizedBody === '0') {
                 await handlers.sendMainMenu(userNumber, userInfo, false);
             } else if (normalizedBody === 's') {
@@ -573,7 +534,7 @@ client.on('message', async msg => {
             }
             break;
             
-        case 'returning_to_main_menu': // Esse estado é genérico e serve para retornar de notificações.
+        case 'returning_to_main_menu':
         if (normalizedBody === '0') {
             await handlers.sendMainMenu(userNumber, userInfo, false);
         } else if (normalizedBody === 's') {
@@ -582,7 +543,7 @@ client.on('message', async msg => {
             const invalidMessage = `Opção inválida: "${msg.body}". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Notificações, 4 para Previsão de despesas, 5 para Seu dinheiro, 6 para Histórico ou "s" para sair.`;
             await client.sendMessage(userNumber, invalidMessage);
             logInteraction(userNumber, userInfo, invalidMessage, 'system_message');
-            stateManager.states[userNumber] = 'returning_to_main_menu'; // Permanece neste estado até uma opção válida
+            stateManager.states[userNumber] = 'returning_to_main_menu';
         }
         break;    
 
@@ -623,3 +584,11 @@ client.on('message', async msg => {
         handlers.setTimeout(userNumber);
     }
 });
+
+// Iniciando o servidor Express
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+// Inicialize o cliente
+client.initialize();
