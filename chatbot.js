@@ -1,42 +1,32 @@
-// IMPORTANTE: Adicione esta linha no início do seu arquivo
+// Importando o Express para criar o servidor
+const express = require('express');
+const qrcode = require('qrcode-terminal');
+const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+
+// Importando o pacote puppeteer-core e o navegador Chromium
 const puppeteer = require('puppeteer-core');
 
-const fs = require('fs');
-const qrcode = require('qrcode-terminal');
-const { Client, MessageMedia, LocalAuth } = require('whatsapp-web.js');
-const path = require('path');
-const express = require('express');
+// Define a porta que o servidor vai usar
+const PORT = process.env.PORT || 8000;
+
+// Cria uma instância do servidor Express
 const app = express();
 
-// Define a porta que o servidor vai usar
-const PORT = process.env.PORT || 8080;
+app.use(express.json());
 
-// O endereço IP que o servidor vai "ouvir".
-// '0.0.0.0' é necessário para que o app seja acessível de fora do servidor.
-const HOST = '0.0.0.0';
-
-// Cria uma rota GET / para a Render saber que o app está online
+// Rota de teste
 app.get('/', (req, res) => {
-    res.send('Chatbot is running!');
+    res.status(200).json({
+        success: true,
+        message: 'O servidor está ativo. O chatbot está pronto para ser inicializado.'
+    });
 });
 
-// Inicia o servidor web. A Render precisa que o app ouça uma porta e um host.
-app.listen(PORT, HOST, () => {
-    console.log(`Server is running at http://${HOST}:${PORT}`);
-});
-
-// Cria a instância do cliente e adiciona o objeto puppeteer
-// Isso garante que a Render saiba onde encontrar o navegador Chromium
+// Inicializando o cliente do WhatsApp
 const client = new Client({
-    authStrategy: new LocalAuth({
-        // Adicione um caminho para a pasta de sessões.
-        // Isso ajuda a manter a sessão, mas não é persistente na versão gratuita.
-        dataPath: './.wwebjs_auth'
-    }),
+    authStrategy: new LocalAuth(),
     puppeteer: {
-        // Usa o caminho do executável fornecido pela Render
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-        // Argumentos necessários para rodar em um ambiente de nuvem
+        headless: true,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -44,28 +34,47 @@ const client = new Client({
             '--disable-accelerated-2d-canvas',
             '--no-first-run',
             '--no-zygote',
-            '--disable-gpu'
+            '--disable-gpu',
+            '--single-process', // Necessário para o Render
         ],
+        executablePath: '/usr/bin/chromium-browser',
     }
 });
 
 client.on('qr', (qr) => {
-    // Gere e escaneie este QR Code com seu celular para autenticar o bot
-    console.log('QR RECEIVED', qr);
+    // Gerando o QR Code para autenticação
+    console.log('QR Code recebido. Leia com seu telefone:');
     qrcode.generate(qr, { small: true });
 });
 
 client.on('ready', () => {
-    console.log('Client is ready!');
+    console.log('Cliente do WhatsApp está pronto!');
 });
 
-client.on('message', message => {
-    // Este é um exemplo simples para responder à sua mensagem
-    if (message.body === '!ping') {
-        message.reply('pong');
+client.on('message', async message => {
+    // Verifique se a mensagem é "olá" ou "olá bot" (não sensível a maiúsculas e minúsculas)
+    if (message.body.toLowerCase() === 'olá' || message.body.toLowerCase() === 'olá bot') {
+        // Obtenha o contato que enviou a mensagem
+        const contact = await message.getContact();
+        
+        // Obtenha o nome do contato
+        const contactName = contact.pushname || contact.id.user;
+
+        // Responda com uma mensagem de saudação personalizada
+        message.reply(`Olá, ${contactName}! Sou um chatbot em teste. Como posso ajudar?`);
+    } else if (message.body.toLowerCase() === '!midia') {
+        // Enviar uma imagem de teste
+        const media = await MessageMedia.fromUrl('https://i.imgur.com/kS5J1wV.png');
+        client.sendMessage(message.from, media, { caption: 'Esta é uma imagem de teste!' });
     }
 });
 
+// Iniciando o servidor Express
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+// Inicialize o cliente
 client.initialize();
 
 
