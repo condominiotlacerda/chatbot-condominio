@@ -25,13 +25,27 @@ app.listen(PORT, HOST, () => {
     console.log(`Server is running at http://${HOST}:${PORT}`);
 });
 
-// Crie a instância do cliente e adicione o objeto puppeteer
+// Cria a instância do cliente e adiciona o objeto puppeteer
 // Isso garante que a Render saiba onde encontrar o navegador Chromium
 const client = new Client({
-    authStrategy: new LocalAuth(),
+    authStrategy: new LocalAuth({
+        // Adicione um caminho para a pasta de sessões.
+        // Isso ajuda a manter a sessão, mas não é persistente na versão gratuita.
+        dataPath: './.wwebjs_auth'
+    }),
     puppeteer: {
+        // Usa o caminho do executável fornecido pela Render
         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        // Argumentos necessários para rodar em um ambiente de nuvem
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu'
+        ],
     }
 });
 
