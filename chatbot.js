@@ -18,17 +18,16 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
 
-// Conexão MongoDB para RemoteAuth (persistência da sessão)
-if (!process.env.MONGO_URI) {
-    console.warn('ATENÇÃO: MONGO_URI não definido nas variáveis de ambiente!');
-}
-mongoose.connect(process.env.MONGO_URI || '', { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB conectado (para RemoteAuth).'))
-    .catch(err => console.error('Erro ao conectar no MongoDB:', err));
+// -------------------------
+// Variáveis globais
+// -------------------------
+let client; // será inicializado após conectar no Mongo
+let store;  // será criado após o mongoose conectar
+let lastQr = null; // QR Code atual para rota /qr
 
-const store = new MongoStore({ mongoose });
-
-// Rota de saúde
+// -------------------------
+// Rotas HTTP
+// -------------------------
 app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
@@ -36,18 +35,17 @@ app.get('/', (req, res) => {
     });
 });
 
-// Variável global p/ QR Code
-let lastQr = null;
+// Rota para exibir o QR Code no navegador
 app.get('/qr', async (req, res) => {
     try {
         if (!lastQr) {
-            return res.status(200).send('<p>Nenhum QR Code disponível no momento. Aguarde o evento "qr".</p>');
+            return res.status(200).send('<p>Nenhum QR Code disponível no momento. Aguarde o evento "qr" e recarregue esta página.</p>');
         }
         const qrImage = await qrcode.toDataURL(lastQr);
         res.status(200).send(`
             <html>
                 <head><meta charset="utf-8" /></head>
-                <body>
+                <body style="font-family: Arial, sans-serif">
                     <h2>Escaneie o QR Code no WhatsApp</h2>
                     <img src="${qrImage}" alt="QR Code" />
                     <p>Se o QR expirar, recarregue a página.</p>
@@ -81,7 +79,9 @@ const CONFIG = {
     }
 };
 
+// ------------------
 // Estado
+// ------------------
 const stateManager = {
     states: {},
     timeouts: {},
@@ -89,7 +89,9 @@ const stateManager = {
     logFiles: {} // mantido por compatibilidade, mas não escrevemos em disco
 };
 
+// ------------------
 // Utils
+// ------------------
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const normalizeMessage = text => text?.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const normalizePhoneNumber = number => number.split('@')[0];
@@ -422,239 +424,263 @@ const handlers = {
     }
 };
 
-// -------------------------------------
-// Inicializando o cliente do WhatsApp
-// -------------------------------------
-const client = new Client({
-    authStrategy: new RemoteAuth({
-        store,
-        backupSyncIntervalMs: 300000
-    }),
-    puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu',
-            '--single-process' // Necessário em algumas plataformas como Render
-        ],
-    }
-});
+// ----------------------------
+// Bootstrap: DB + WhatsApp
+// ----------------------------
+async function bootstrap() {
+    try {
+        if (!process.env.MONGO_URI) {
+            console.warn('ATENÇÃO: MONGO_URI não definido nas variáveis de ambiente!');
+        }
 
-// Eventos do cliente
-client.on('qr', qr => {
-    console.log('QR Code gerado. Acesse /qr para escanear no celular.');
-    lastQr = qr;
-});
+        // Conecta ao MongoDB e só depois cria o MongoStore
+        await mongoose.connect(process.env.MONGO_URI || '');
+        console.log('MongoDB conectado (para RemoteAuth).');
 
-client.on('ready', () => console.log('WhatsApp conectado!'));
+        store = new MongoStore({ mongoose });
 
-// ---------------------
-// Handler de mensagens
-// ---------------------
-client.on('message', async msg => {
-    const userNumber = msg.from;
-    const normalizedNumber = normalizePhoneNumber(userNumber);
-    const normalizedBody = normalizeMessage(msg.body);
-    const chat = await msg.getChat();
-
-    console.log(`Número recebido: ${userNumber} | Normalizado: ${normalizedNumber}`);
-
-    const userInfo = CONFIG.AUTHORIZED_USERS[normalizedNumber];
-    if (!userInfo) {
-        await handlers.sendUnauthorizedMessage(userNumber);
-        return;
-    }
-
-    logInteraction(userNumber, userInfo, msg.body);
-
-    if (stateManager.lastMessageIds[userNumber] === msg.id.id) return;
-    stateManager.lastMessageIds[userNumber] = msg.id.id;
-
-    if (['sair', 's'].includes(normalizedBody)) {
-        await handlers.resetConversation(userNumber);
-        return;
-    }
-
-    if (['oi', 'ola'].includes(normalizedBody)) {
-        await handlers.sendMainMenu(userNumber, userInfo, true);
-        return;
-    }
-
-    switch (stateManager.states[userNumber]) {
-        case 'main_menu':
-            if (normalizedBody === '1') {
-                await handlers.handleBoletos(userNumber, chat, userInfo);
-            } else if (normalizedBody === '2') {
-                await handlers.handleContasMenu(userNumber, chat, userInfo);
-            } else if (normalizedBody === '3') {
-                await handlers.handleNotificacoes(userNumber, chat, userInfo);
-            } else if (normalizedBody === '4') {
-                await chat.sendStateTyping();
-                await delay(500);
-
-                const despesasPath = path.join(__dirname, 'previsao_despesas', 'previsao_despesas.pdf');
-                const filename = 'previsao_despesas.pdf';
-
-                try {
-                    const media = MessageMedia.fromFilePath(despesasPath);
-                    await client.sendMessage(userNumber, media, {
-                        sendMediaAsDocument: true,
-                        filename
-                    });
-                    logInteraction(userNumber, userInfo, filename, 'file_sent');
-                    await delay(500);
-                    const optionsMessage = '\nDigite 0 para voltar ao menu inicial ou "s" para sair.';
-                    await client.sendMessage(userNumber, optionsMessage);
-                    logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
-                    stateManager.states[userNumber] = 'previsao_despesas_menu';
-                } catch (error) {
-                    logInteraction(userNumber, userInfo, `Erro ao enviar ${filename}: ${error?.message}`, 'error');
-                    await client.sendMessage(userNumber, `Erro ao enviar a previsão de despesas. Verifique se o arquivo ${filename} existe na pasta 'previsao_despesas'.`);
-                    logInteraction(userNumber, userInfo, `Erro ao enviar a previsão de despesas. Verifique se o arquivo ${filename} existe na pasta 'previsao_despesas'.`, 'system_message');
-                }
-
-            } else if (normalizedBody === '5') {
-                await chat.sendStateTyping();
-                await delay(500);
-                const submenuMessage = 'Escolha uma opção de "Seu dinheiro":\n1 - Seu dinheiro 1\n2 - Seu dinheiro 2\n\nDigite 0 para voltar ao menu principal ou "s" para sair.';
-                await client.sendMessage(userNumber, submenuMessage);
-                logInteraction(userNumber, userInfo, 'Exibiu submenu Seu dinheiro', 'system_message');
-                stateManager.states[userNumber] = 'seu_dinheiro_submenu';
-            } else if (normalizedBody === '6') {
-                await handlers.handleHistorico(userNumber, chat, userInfo);
-            } else {
-                const invalidMessage = `Opção inválida: "${msg.body}". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Notificações, 4 para Previsão de despesas, 5 para Seu dinheiro, 6 para Histórico ou "s" para sair.`;
-                await client.sendMessage(userNumber, invalidMessage);
-                logInteraction(userNumber, userInfo, invalidMessage, 'system_message');
+        // Inicializando o cliente do WhatsApp somente após o Mongo estar pronto
+        client = new Client({
+            authStrategy: new RemoteAuth({
+                store,
+                backupSyncIntervalMs: 300000
+            }),
+            puppeteer: {
+                headless: true,
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-accelerated-2d-canvas',
+                    '--no-first-run',
+                    '--no-zygote',
+                    '--disable-gpu',
+                    '--single-process' // Necessário em algumas plataformas como Render
+                ],
             }
-            break;
+        });
 
-        case 'seu_dinheiro_submenu':
-            if (normalizedBody === '1') {
-                await chat.sendStateTyping();
-                await delay(500);
-                const seuDinheiroPath1 = path.join(__dirname, 'seu_dinheiro', 'seu_dinheiro_1.pdf');
-                const filename1 = 'seu_dinheiro_1.pdf';
-                try {
-                    const media1 = MessageMedia.fromFilePath(seuDinheiroPath1);
-                    await client.sendMessage(userNumber, media1, { sendMediaAsDocument: true, filename: filename1 });
-                    logInteraction(userNumber, userInfo, filename1, 'file_sent');
-                    await delay(500);
-                    const optionsMessage = '\nDigite 0 para voltar ao menu principal ou "s" para sair.';
-                    await client.sendMessage(userNumber, optionsMessage);
-                    logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
-                    stateManager.states[userNumber] = 'seu_dinheiro_submenu';
-                } catch (error) {
-                    logInteraction(userNumber, userInfo, `Erro ao enviar ${filename1}: ${error?.message}`, 'error');
-                    await client.sendMessage(userNumber, `Erro ao enviar o arquivo Seu dinheiro 1. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`);
-                    logInteraction(userNumber, userInfo, `Erro ao enviar o arquivo Seu dinheiro 1. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`, 'system_message');
-                }
-            } else if (normalizedBody === '2') {
-                await chat.sendStateTyping();
-                await delay(500);
-                const seuDinheiroPath2 = path.join(__dirname, 'seu_dinheiro', 'seu_dinheiro_2.pdf');
-                const filename2 = 'seu_dinheiro_2.pdf';
-                try {
-                    const media2 = MessageMedia.fromFilePath(seuDinheiroPath2);
-                    await client.sendMessage(userNumber, media2, { sendMediaAsDocument: true, filename: filename2 });
-                    logInteraction(userNumber, userInfo, filename2, 'file_sent');
-                    await delay(500);
-                    const optionsMessage = '\nDigite 0 para voltar ao menu principal ou "s" para sair.';
-                    await client.sendMessage(userNumber, optionsMessage);
-                    logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
-                    stateManager.states[userNumber] = 'seu_dinheiro_submenu';
-                } catch (error) {
-                    logInteraction(userNumber, userInfo, `Erro ao enviar ${filename2}: ${error?.message}`, 'error');
-                    await client.sendMessage(userNumber, `Erro ao enviar o arquivo Seu dinheiro 2. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`);
-                    logInteraction(userNumber, userInfo, `Erro ao enviar o arquivo Seu dinheiro 2. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`, 'system_message');
-                }
-            } else if (normalizedBody === '0') {
-                await handlers.sendMainMenu(userNumber, userInfo, false);
-            } else if (normalizedBody === 's') {
+        // Eventos do cliente
+        client.on('qr', qr => {
+            console.log('QR Code gerado. Acesse /qr para escanear no celular.');
+            lastQr = qr;
+        });
+
+        client.on('ready', () => console.log('WhatsApp conectado!'));
+
+        // Handler de mensagens
+        client.on('message', async msg => {
+            const userNumber = msg.from;
+            const normalizedNumber = normalizePhoneNumber(userNumber);
+            const normalizedBody = normalizeMessage(msg.body);
+            const chat = await msg.getChat();
+
+            console.log(`Número recebido: ${userNumber} | Normalizado: ${normalizedNumber}`);
+
+            const userInfo = CONFIG.AUTHORIZED_USERS[normalizedNumber];
+            if (!userInfo) {
+                await handlers.sendUnauthorizedMessage(userNumber);
+                return;
+            }
+
+            logInteraction(userNumber, userInfo, msg.body);
+
+            if (stateManager.lastMessageIds[userNumber] === msg.id.id) return;
+            stateManager.lastMessageIds[userNumber] = msg.id.id;
+
+            if (['sair', 's'].includes(normalizedBody)) {
                 await handlers.resetConversation(userNumber);
-            } else {
-                await client.sendMessage(userNumber, 'Opção inválida. Digite 1 ou 2 para as opções de "Seu dinheiro", 0 para voltar ou "s" para sair.');
-                logInteraction(userNumber, userInfo, 'Opção inválida no submenu Seu dinheiro', 'system_message');
+                return;
             }
-            break;
 
-        case 'boletos_menu':
-        case 'contas_menu':
-        case 'notificacoes_menu':
-        case 'previsao_despesas_menu':
-        case 'seu_dinheiro_menu':
-        case 'historico_menu':
-            if (normalizedBody === '0') {
-                await handlers.sendMainMenu(userNumber, userInfo, false);
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.');
-                logInteraction(userNumber, userInfo, 'Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.', 'system_message');
+            if (['oi', 'ola'].includes(normalizedBody)) {
+                await handlers.sendMainMenu(userNumber, userInfo, true);
+                return;
             }
-            break;
 
-        case 'returning_to_main_menu':
-            if (normalizedBody === '0') {
-                await handlers.sendMainMenu(userNumber, userInfo, false);
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                const invalidMessage = `Opção inválida: "${msg.body}". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Notificações, 4 para Previsão de despesas, 5 para Seu dinheiro, 6 para Histórico ou "s" para sair.`;
-                await client.sendMessage(userNumber, invalidMessage);
-                logInteraction(userNumber, userInfo, invalidMessage, 'system_message');
-                stateManager.states[userNumber] = 'returning_to_main_menu';
+            switch (stateManager.states[userNumber]) {
+                case 'main_menu':
+                    if (normalizedBody === '1') {
+                        await handlers.handleBoletos(userNumber, chat, userInfo);
+                    } else if (normalizedBody === '2') {
+                        await handlers.handleContasMenu(userNumber, chat, userInfo);
+                    } else if (normalizedBody === '3') {
+                        await handlers.handleNotificacoes(userNumber, chat, userInfo);
+                    } else if (normalizedBody === '4') {
+                        await chat.sendStateTyping();
+                        await delay(500);
+
+                        const despesasPath = path.join(__dirname, 'previsao_despesas', 'previsao_despesas.pdf');
+                        const filename = 'previsao_despesas.pdf';
+
+                        try {
+                            const media = MessageMedia.fromFilePath(despesasPath);
+                            await client.sendMessage(userNumber, media, {
+                                sendMediaAsDocument: true,
+                                filename
+                            });
+                            logInteraction(userNumber, userInfo, filename, 'file_sent');
+                            await delay(500);
+                            const optionsMessage = '\nDigite 0 para voltar ao menu inicial ou "s" para sair.';
+                            await client.sendMessage(userNumber, optionsMessage);
+                            logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
+                            stateManager.states[userNumber] = 'previsao_despesas_menu';
+                        } catch (error) {
+                            logInteraction(userNumber, userInfo, `Erro ao enviar ${filename}: ${error?.message}`, 'error');
+                            await client.sendMessage(userNumber, `Erro ao enviar a previsão de despesas. Verifique se o arquivo ${filename} existe na pasta 'previsao_despesas'.`);
+                            logInteraction(userNumber, userInfo, `Erro ao enviar a previsão de despesas. Verifique se o arquivo ${filename} existe na pasta 'previsao_despesas'.`, 'system_message');
+                        }
+
+                    } else if (normalizedBody === '5') {
+                        await chat.sendStateTyping();
+                        await delay(500);
+                        const submenuMessage = 'Escolha uma opção de "Seu dinheiro":\n1 - Seu dinheiro 1\n2 - Seu dinheiro 2\n\nDigite 0 para voltar ao menu principal ou "s" para sair.';
+                        await client.sendMessage(userNumber, submenuMessage);
+                        logInteraction(userNumber, userInfo, 'Exibiu submenu Seu dinheiro', 'system_message');
+                        stateManager.states[userNumber] = 'seu_dinheiro_submenu';
+                    } else if (normalizedBody === '6') {
+                        await handlers.handleHistorico(userNumber, chat, userInfo);
+                    } else {
+                        const invalidMessage = `Opção inválida: "${msg.body}". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Notificações, 4 para Previsão de despesas, 5 para Seu dinheiro, 6 para Histórico ou "s" para sair.`;
+                        await client.sendMessage(userNumber, invalidMessage);
+                        logInteraction(userNumber, userInfo, invalidMessage, 'system_message');
+                    }
+                    break;
+
+                case 'seu_dinheiro_submenu':
+                    if (normalizedBody === '1') {
+                        await chat.sendStateTyping();
+                        await delay(500);
+                        const seuDinheiroPath1 = path.join(__dirname, 'seu_dinheiro', 'seu_dinheiro_1.pdf');
+                        const filename1 = 'seu_dinheiro_1.pdf';
+                        try {
+                            const media1 = MessageMedia.fromFilePath(seuDinheiroPath1);
+                            await client.sendMessage(userNumber, media1, { sendMediaAsDocument: true, filename: filename1 });
+                            logInteraction(userNumber, userInfo, filename1, 'file_sent');
+                            await delay(500);
+                            const optionsMessage = '\nDigite 0 para voltar ao menu principal ou "s" para sair.';
+                            await client.sendMessage(userNumber, optionsMessage);
+                            logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
+                            stateManager.states[userNumber] = 'seu_dinheiro_submenu';
+                        } catch (error) {
+                            logInteraction(userNumber, userInfo, `Erro ao enviar ${filename1}: ${error?.message}`, 'error');
+                            await client.sendMessage(userNumber, `Erro ao enviar o arquivo Seu dinheiro 1. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`);
+                            logInteraction(userNumber, userInfo, `Erro ao enviar o arquivo Seu dinheiro 1. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`, 'system_message');
+                        }
+                    } else if (normalizedBody === '2') {
+                        await chat.sendStateTyping();
+                        await delay(500);
+                        const seuDinheiroPath2 = path.join(__dirname, 'seu_dinheiro', 'seu_dinheiro_2.pdf');
+                        const filename2 = 'seu_dinheiro_2.pdf';
+                        try {
+                            const media2 = MessageMedia.fromFilePath(seuDinheiroPath2);
+                            await client.sendMessage(userNumber, media2, { sendMediaAsDocument: true, filename: filename2 });
+                            logInteraction(userNumber, userInfo, filename2, 'file_sent');
+                            await delay(500);
+                            const optionsMessage = '\nDigite 0 para voltar ao menu principal ou "s" para sair.';
+                            await client.sendMessage(userNumber, optionsMessage);
+                            logInteraction(userNumber, userInfo, optionsMessage, 'system_message');
+                            stateManager.states[userNumber] = 'seu_dinheiro_submenu';
+                        } catch (error) {
+                            logInteraction(userNumber, userInfo, `Erro ao enviar ${filename2}: ${error?.message}`, 'error');
+                            await client.sendMessage(userNumber, `Erro ao enviar o arquivo Seu dinheiro 2. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`);
+                            logInteraction(userNumber, userInfo, `Erro ao enviar o arquivo Seu dinheiro 2. Verifique se o arquivo existe na pasta 'seu_dinheiro'.`, 'system_message');
+                        }
+                    } else if (normalizedBody === '0') {
+                        await handlers.sendMainMenu(userNumber, userInfo, false);
+                    } else if (normalizedBody === 's') {
+                        await handlers.resetConversation(userNumber);
+                    } else {
+                        await client.sendMessage(userNumber, 'Opção inválida. Digite 1 ou 2 para as opções de "Seu dinheiro", 0 para voltar ou "s" para sair.');
+                        logInteraction(userNumber, userInfo, 'Opção inválida no submenu Seu dinheiro', 'system_message');
+                    }
+                    break;
+
+                case 'boletos_menu':
+                case 'contas_menu':
+                case 'notificacoes_menu':
+                case 'previsao_despesas_menu':
+                case 'seu_dinheiro_menu':
+                case 'historico_menu':
+                    if (normalizedBody === '0') {
+                        await handlers.sendMainMenu(userNumber, userInfo, false);
+                    } else if (normalizedBody === 's') {
+                        await handlers.resetConversation(userNumber);
+                    } else {
+                        await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.');
+                        logInteraction(userNumber, userInfo, 'Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.', 'system_message');
+                    }
+                    break;
+
+                case 'returning_to_main_menu':
+                    if (normalizedBody === '0') {
+                        await handlers.sendMainMenu(userNumber, userInfo, false);
+                    } else if (normalizedBody === 's') {
+                        await handlers.resetConversation(userNumber);
+                    } else {
+                        const invalidMessage = `Opção inválida: "${msg.body}". Escolha 1 para Boletos, 2 para Prestação de contas, 3 para Notificações, 4 para Previsão de despesas, 5 para Seu dinheiro, 6 para Histórico ou "s" para sair.`;
+                        await client.sendMessage(userNumber, invalidMessage);
+                        logInteraction(userNumber, userInfo, invalidMessage, 'system_message');
+                        stateManager.states[userNumber] = 'returning_to_main_menu';
+                    }
+                    break;
+
+                case 'contas_mes_selection':
+                    if (normalizedBody === '0') {
+                        await handlers.sendMainMenu(userNumber, userInfo, false);
+                        stateManager.states[userNumber] = 'main_menu';
+                    } else if (normalizedBody === 's') {
+                        await handlers.resetConversation(userNumber);
+                    } else {
+                        const mesSelecionado = parseInt(normalizedBody);
+                        if (!isNaN(mesSelecionado)) {
+                            await handlers.handleContas(userNumber, chat, userInfo, mesSelecionado);
+                        } else {
+                            await client.sendMessage(userNumber, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.');
+                            logInteraction(userNumber, userInfo, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.', 'system_message');
+                        }
+                    }
+                    break;
+
+                case 'contas_navigation':
+                    if (normalizedBody === '0') {
+                        await handlers.handleContasMenu(userNumber, chat, userInfo);
+                    } else if (normalizedBody === 's') {
+                        await handlers.resetConversation(userNumber);
+                    } else {
+                        await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.');
+                        logInteraction(userNumber, userInfo, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.', 'system_message');
+                    }
+                    break;
+
+                default:
+                    await client.sendMessage(userNumber, 'Digite "oi" ou "ola" para iniciar!');
+                    logInteraction(userNumber, userInfo, 'Digite "oi" ou "ola" para iniciar!', 'system_message');
             }
-            break;
 
-        case 'contas_mes_selection':
-            if (normalizedBody === '0') {
-                await handlers.sendMainMenu(userNumber, userInfo, false);
-                stateManager.states[userNumber] = 'main_menu';
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                const mesSelecionado = parseInt(normalizedBody);
-                if (!isNaN(mesSelecionado)) {
-                    await handlers.handleContas(userNumber, chat, userInfo, mesSelecionado);
-                } else {
-                    await client.sendMessage(userNumber, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.');
-                    logInteraction(userNumber, userInfo, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.', 'system_message');
-                }
+            if (stateManager.states[userNumber]) {
+                handlers.setTimeout(userNumber);
             }
-            break;
+        });
 
-        case 'contas_navigation':
-            if (normalizedBody === '0') {
-                await handlers.handleContasMenu(userNumber, chat, userInfo);
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.');
-                logInteraction(userNumber, userInfo, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.', 'system_message');
-            }
-            break;
-
-        default:
-            await client.sendMessage(userNumber, 'Digite "oi" ou "ola" para iniciar!');
-            logInteraction(userNumber, userInfo, 'Digite "oi" ou "ola" para iniciar!', 'system_message');
+        // Inicializa o WhatsApp
+        client.initialize();
+    } catch (err) {
+        console.error('Falha ao inicializar o bot:', err);
+        // Em Render, deixar o processo morrer faz o serviço reiniciar automaticamente.
+        // Se preferir manter vivo, remova a linha abaixo.
+        // process.exit(1);
     }
-
-    if (stateManager.states[userNumber]) {
-        handlers.setTimeout(userNumber);
-    }
-});
+}
 
 // ----------------------------
-// Subida do servidor e cliente
+// Subida do servidor HTTP
 // ----------------------------
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
 
-client.initialize();
+// ----------------------------
+// Inicia DB + WhatsApp
+// ----------------------------
+bootstrap();
