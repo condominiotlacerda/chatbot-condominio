@@ -345,15 +345,13 @@ const client = new Client({
 
 // Evento de QR Code gerado
 client.on('qr', (qr) => {
-    // Usa a biblioteca 'qrcode' para gerar uma imagem base64 do QR Code
     qrcode.toDataURL(qr, (err, url) => {
         if (err) {
             console.error('Erro ao gerar QR Code como imagem:', err);
             qrCodeBase64 = null;
         } else {
-            // Mensagem de log genérica para funcionar tanto localmente quanto em produção
             console.log('QR Code recebido. Por favor, acesse a página para escanear.');
-            qrCodeBase64 = url; // Armazena a imagem em base64
+            qrCodeBase64 = url;
         }
     });
 });
@@ -370,6 +368,63 @@ client.on('disconnected', (reason) => {
     clientReady = false;
 });
 
+// Rota principal que serve a página HTML com o QR code
+app.get('/', (req, res) => {
+    console.log('Requisição GET para a página principal recebida.');
+    if (clientReady) {
+        // Se o cliente já estiver pronto, mostra a mensagem de conectado.
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>WhatsApp Conectado</title>
+                <style>
+                    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
+                    .container { text-align: center; background-color: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+                    h1 { color: #28a745; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Conectado!</h1>
+                    <p>O chatbot está online e pronto para receber mensagens.</p>
+                </div>
+            </body>
+            </html>
+        `);
+    } else {
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="refresh" content="5"> <!-- Auto-atualiza a página a cada 5 segundos -->
+                <title>QR Code WhatsApp</title>
+                <style>
+                    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
+                    .container { text-align: center; background-color: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+                    h1 { color: #333; }
+                    #qrcode-img { border: 1px solid #ddd; padding: 10px; border-radius: 4px; max-width: 300px; height: auto; }
+                    .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+                    .loading-spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #007bff; animation: spin 1s ease infinite; margin-top: 1rem; }
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                    .status-message { margin-top: 1rem; font-size: 1.2rem; color: #555; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Escaneie o QR Code</h1>
+                    ${qrCodeBase64 ? `<img id="qrcode-img" src="${qrCodeBase64}" alt="QR Code" />` : `<div class="loading-container"><div class="loading-spinner"></div><p class="status-message">Aguardando o QR Code...</p></div>`}
+                </div>
+            </body>
+            </html>
+        `);
+    }
+});
+
 // Manipula todas as mensagens recebidas
 client.on('message_create', async (message) => {
     // Log para verificar se o evento foi disparado
@@ -384,7 +439,6 @@ client.on('message_create', async (message) => {
         return handlers.sendUnauthorizedMessage(userNumber);
     }
     
-    // Adicionando um try-catch para capturar erros silenciosos
     try {
         const chat = await message.getChat();
 
