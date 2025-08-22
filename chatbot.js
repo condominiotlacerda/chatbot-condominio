@@ -1,30 +1,190 @@
-// Importando o Express para criar o servidor
+// Importando as bibliotecas necessárias
 const express = require('express');
-const qrcode = require('qrcode-terminal');
+const { createServer } = require('http');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+const qrcode = require('qrcode');
 const path = require('path');
 const fs = require('fs');
 
-// Importando o pacote puppeteer-core e o navegador Chromium
-const puppeteer = require('puppeteer-core');
-
-// Define a porta que o servidor vai usar
+// Define a porta do servidor
 const PORT = process.env.PORT || 8000;
 
-// Cria uma instância do servidor Express
+// Cria uma instância do servidor Express e do servidor HTTP
 const app = express();
+const httpServer = createServer(app);
 
 app.use(express.json());
 
-// Rota de teste
-app.get('/', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: 'O servidor está ativo. O chatbot está pronto para ser inicializado.'
+// Variáveis para armazenar a imagem do QR Code e o estado do cliente
+let qrCodeBase64 = null;
+let clientReady = false;
+
+// Inicializa o cliente do WhatsApp Web
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu',
+            '--single-process', // Necessário para o Render
+        ],
+    },
+});
+
+// Evento de QR Code gerado
+client.on('qr', (qr) => {
+    // Usa a biblioteca 'qrcode' para gerar uma imagem base64 do QR Code
+    qrcode.toDataURL(qr, (err, url) => {
+        if (err) {
+            console.error('Erro ao gerar QR Code como imagem:', err);
+            qrCodeBase64 = null;
+        } else {
+            console.log('QR Code recebido. Acesse http://localhost:8000 para escanear.');
+            qrCodeBase64 = url; // Armazena a imagem em base64
+        }
     });
 });
 
-// Configurações
+// Evento de cliente pronto
+client.on('ready', () => {
+    console.log('Cliente está pronto!');
+    clientReady = true;
+});
+
+// Evento de desconexão
+client.on('disconnected', (reason) => {
+    console.log('Cliente foi desconectado:', reason);
+    clientReady = false;
+});
+
+// Rota principal que serve a página HTML com o QR code
+app.get('/', (req, res) => {
+    // Se o cliente já estiver pronto, mostra a mensagem de conectado.
+    if (clientReady) {
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>WhatsApp Conectado</title>
+                <style>
+                    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; color: #333; }
+                    .container { text-align: center; background-color: white; padding: 2em; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+                    h1 { color: #008000; }
+                    p { font-size: 1.1em; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Bot Conectado com Sucesso!</h1>
+                    <p>O bot está pronto para receber mensagens.</p>
+                </div>
+            </body>
+            </html>
+        `);
+    } else {
+        // Se ainda não estiver pronto, mostra a página que vai carregar o QR code
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Conectar Chatbot</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        background-color: #f0f2f5;
+                        text-align: center;
+                        color: #333;
+                    }
+                    .container {
+                        background-color: #fff;
+                        padding: 40px;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    }
+                    h1 {
+                        color: #128C7E;
+                    }
+                    #qrcode-container img {
+                        border: 4px solid #128C7E;
+                        border-radius: 8px;
+                        width: 250px;
+                        height: 250px;
+                    }
+                    p {
+                        margin-top: 20px;
+                        font-size: 1.1em;
+                    }
+                    .message {
+                        font-weight: bold;
+                        margin-top: 10px;
+                        color: #555;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Escaneie o QR Code</h1>
+                    <p>Use o seu celular para escanear o c&oacute;digo abaixo e conectar o bot.</p>
+                    <div id="qrcode-container">
+                        <img id="qr-image" src="" alt="QR Code" style="display: none;">
+                    </div>
+                    <div class="message" id="status-message">Aguardando QR Code...</div>
+                </div>
+                <script>
+                    const statusMessage = document.getElementById('status-message');
+                    const qrImage = document.getElementById('qr-image');
+
+                    async function fetchQrCode() {
+                        try {
+                            const response = await fetch('/status');
+                            const data = await response.json();
+                            if (data.qrCode) {
+                                qrImage.src = data.qrCode;
+                                qrImage.style.display = 'block';
+                                statusMessage.textContent = 'QR Code recebido. Escaneie para conectar!';
+                            } else {
+                                qrImage.style.display = 'none';
+                                statusMessage.textContent = 'Aguardando o QR Code...';
+                                setTimeout(fetchQrCode, 2000); // Tenta novamente a cada 2 segundos.
+                            }
+                        } catch (error) {
+                            console.error('Erro ao buscar QR Code:', error);
+                            statusMessage.textContent = 'Erro ao carregar o QR Code.';
+                            setTimeout(fetchQrCode, 5000); // Tenta novamente em caso de erro.
+                        }
+                    }
+                    fetchQrCode();
+                </script>
+            </body>
+            </html>
+        `);
+    }
+});
+
+// Nova rota para servir o QR code em formato de imagem base64
+app.get('/status', (req, res) => {
+    res.json({
+        qrCode: qrCodeBase64,
+        clientReady: clientReady
+    });
+});
+
+// Código restante do chatbot (mantido do seu arquivo)
 const CONFIG = {
     TIMEOUT: 180000,
     VALID_APARTMENTS: ['1', '101', '102', '201', '202', '301', '302', '401'],
@@ -44,7 +204,6 @@ const CONFIG = {
     }
 };
 
-// Inicialização
 const stateManager = {
     states: {},
     timeouts: {},
@@ -52,12 +211,10 @@ const stateManager = {
     logFiles: {}
 };
 
-// Utilitários
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const normalizeMessage = text => text?.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const normalizePhoneNumber = number => number.split('@')[0];
 
-// Função de Log
 function logInteraction(userNumber, userInfo, message, type = 'user_message') {
     const timestamp = new Date().toISOString();
     let logFilePath = stateManager.logFiles[userNumber];
@@ -90,7 +247,6 @@ function logInteraction(userNumber, userInfo, message, type = 'user_message') {
     // fs.appendFileSync(logFilePath, logMessage + '\n', 'utf8'); // Descomente para ativar o log em arquivo
 }
 
-// Handlers
 const handlers = {
     async resetConversation(userNumber) {
         clearTimeout(stateManager.timeouts[userNumber]);
@@ -366,29 +522,6 @@ const handlers = {
     }
 };
 
-// Inicializando o cliente do WhatsApp
-const client = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu',
-            '--single-process', // Necessário para o Render
-        ],
-        executablePath: '/usr/bin/chromium-browser',
-    }
-});
-
-// Configuração do cliente
-client.on('qr', qr => qrcode.generate(qr, { small: true }));
-client.on('ready', () => console.log('WhatsApp conectado!'));
-
 // Handler de mensagens
 client.on('message', async msg => {
     const userNumber = msg.from;
@@ -545,7 +678,7 @@ client.on('message', async msg => {
             logInteraction(userNumber, userInfo, invalidMessage, 'system_message');
             stateManager.states[userNumber] = 'returning_to_main_menu';
         }
-        break;    
+        break;      
 
         case 'contas_mes_selection':
             if (normalizedBody === '0') {
@@ -586,7 +719,7 @@ client.on('message', async msg => {
 });
 
 // Iniciando o servidor Express
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
 
