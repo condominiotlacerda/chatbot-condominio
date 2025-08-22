@@ -403,7 +403,7 @@ app.get('/', (req, res) => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta http-equiv="refresh" content="5"> <!-- Auto-atualiza a página a cada 5 segundos -->
+                <!-- REMOVIDO o meta refresh para evitar a invalidação do QR Code -->
                 <title>QR Code WhatsApp</title>
                 <style>
                     body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
@@ -414,12 +414,15 @@ app.get('/', (req, res) => {
                     .loading-spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #007bff; animation: spin 1s ease infinite; margin-top: 1rem; }
                     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
                     .status-message { margin-top: 1rem; font-size: 1.2rem; color: #555; }
+                    .refresh-button { margin-top: 2rem; padding: 0.75rem 1.5rem; font-size: 1rem; color: #fff; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+                    .refresh-button:hover { background-color: #0056b3; }
                 </style>
             </head>
             <body>
                 <div class="container">
                     <h1>Escaneie o QR Code</h1>
                     ${qrCodeBase64 ? `<img id="qrcode-img" src="${qrCodeBase64}" alt="QR Code" />` : `<div class="loading-container"><div class="loading-spinner"></div><p class="status-message">Aguardando o QR Code...</p></div>`}
+                    <button class="refresh-button" onclick="window.location.reload();">Atualizar QR Code</button>
                 </div>
             </body>
             </html>
