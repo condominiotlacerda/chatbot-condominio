@@ -303,44 +303,14 @@ const handlers = {
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        // Argumentos para reduzir o consumo de recursos de memória e CPU
+        // Argumentos simplificados para evitar possíveis problemas de compatibilidade
         headless: true,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
             '--disable-gpu',
-            '--single-process',
-            '--disable-infobars',
-            '--window-position=0,0',
-            '--ignore-certificate-errors',
-            '--ignore-certificate-errors-skip-list',
-            '--disable-audio-output',
-            '--disable-background-networking',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-breakpad',
-            '--disable-client-side-phishing-detection',
-            '--disable-component-update',
-            '--disable-default-apps',
-            '--disable-extensions',
-            '--disable-features=interest-quiz',
-            '--disable-hang-monitor',
-            '--disable-ipc-flooding-protection',
-            '--disable-popup-blocking',
-            '--disable-prompt-on-repost',
-            '--disable-renderer-backgrounding',
-            '--disable-speech-api',
-            '--disable-sync',
-            '--disable-web-security',
-            '--enable-features=NetworkService,NetworkServiceInProcess',
-            '--enable-automation',
-            '--force-device-scale-factor=1',
-            '--font-render-hinting=none',
-            '--force-color-profile=srgb'
+            '--single-process'
         ],
     },
 });
@@ -430,11 +400,16 @@ app.get('/', (req, res) => {
 });
 
 // Manipula todas as mensagens recebidas
-// NOTA: Troquei 'message_create' por 'message' para garantir que mensagens de outros usuários
-// e as suas próprias mensagens enviadas para o bot sejam processadas corretamente.
-client.on('message', async (message) => {
-    // Log para verificar se o evento foi disparado
-    console.log(`Mensagem recebida de ${message.from}: "${message.body}"`);
+client.on('message_create', async (message) => {
+    // ESTE É O NOSSO PONTO DE TESTE CRÍTICO. SE ESTE LOG NÃO APARECER, A CONEXÃO ESTÁ FALHANDO.
+    console.log("--- TESTE DE CONEXÃO: Mensagem recebida! ---");
+    console.log(`Mensagem recebida de: ${message.from}, Conteúdo: "${message.body}"`);
+    
+    // Ignora mensagens enviadas pelo próprio bot para evitar loops infinitos.
+    if (message.fromMe) {
+        console.log("Mensagem ignorada, pois foi enviada pelo próprio bot.");
+        return;
+    }
     
     const userNumber = normalizePhoneNumber(message.from);
     const body = message.body;
@@ -442,8 +417,7 @@ client.on('message', async (message) => {
     const userInfo = CONFIG.AUTHORIZED_USERS[userNumber];
 
     if (!userInfo) {
-        // Se o usuário não estiver na lista de autorizados, envia uma mensagem e encerra a execução.
-        // Isso impede que o bot responda a números não cadastrados.
+        console.log(`Usuário ${userNumber} não autorizado.`);
         return handlers.sendUnauthorizedMessage(userNumber);
     }
     
