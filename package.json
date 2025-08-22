@@ -1,7 +1,7 @@
 {
   "name": "chatbot",
   "version": "1.0.0",
-  "description": "A WhatsApp chatbot project.",
+  "description": "WhatsApp chatbot com RemoteAuth para Render",
   "main": "chatbot.js",
   "scripts": {
     "start": "node chatbot.js",
@@ -11,13 +11,17 @@
     "express": "^4.19.2",
     "puppeteer": "^22.12.1",
     "qrcode": "^1.5.4",
-    "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.23.1"
+    "whatsapp-web.js": "^1.23.1",
+    "mongoose": "^8.5.1",
+    "wwebjs-mongo": "^1.1.0"
   },
   "overrides": {
     "whatsapp-web.js": {
       "puppeteer": "$puppeteer"
     }
+  },
+  "engines": {
+    "node": ">=18.x"
   },
   "keywords": [],
   "author": "",
