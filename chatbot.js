@@ -54,6 +54,8 @@ const CONFIG = {
     VALID_APARTMENTS: ['1', '101', '102', '201', '202', '301', '302', '401'],
     BOLETO_TYPES: ['condominio', '1', '2', '3'],
     AUTHORIZED_USERS: {
+        // Por favor, adicione seu número de telefone aqui no formato '55<DDD><Numero>'.
+        // Exemplo: '5511999998888': { name: 'Seu Nome', apartment: '000' },
         '558586282980': { name: 'João Paulo', apartment: '1' },
         '558597294028': { name: 'José Rocha', apartment: '1' },
         '558588402222': { name: 'Lizandro', apartment: '101' },
@@ -436,6 +438,8 @@ client.on('message_create', async (message) => {
     const userInfo = CONFIG.AUTHORIZED_USERS[userNumber];
 
     if (!userInfo) {
+        // Se o usuário não estiver na lista de autorizados, envia uma mensagem e encerra a execução.
+        // Isso impede que o bot responda a números não cadastrados.
         return handlers.sendUnauthorizedMessage(userNumber);
     }
     
