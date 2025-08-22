@@ -403,7 +403,6 @@ app.get('/', (req, res) => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <!-- REMOVIDO o meta refresh para evitar a invalidação do QR Code -->
                 <title>QR Code WhatsApp</title>
                 <style>
                     body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
@@ -431,7 +430,9 @@ app.get('/', (req, res) => {
 });
 
 // Manipula todas as mensagens recebidas
-client.on('message_create', async (message) => {
+// NOTA: Troquei 'message_create' por 'message' para garantir que mensagens de outros usuários
+// e as suas próprias mensagens enviadas para o bot sejam processadas corretamente.
+client.on('message', async (message) => {
     // Log para verificar se o evento foi disparado
     console.log(`Mensagem recebida de ${message.from}: "${message.body}"`);
     
