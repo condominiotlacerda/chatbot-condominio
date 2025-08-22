@@ -370,127 +370,11 @@ client.on('disconnected', (reason) => {
     clientReady = false;
 });
 
-// Rota principal que serve a página HTML com o QR code
-app.get('/', (req, res) => {
-    if (clientReady) {
-        res.send(`
-            <!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>WhatsApp Conectado</title>
-                <style>
-                    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; color: #333; }
-                    .container { text-align: center; background-color: white; padding: 2em; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-                    h1 { color: #008000; }
-                    p { font-size: 1.1em; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>Bot Conectado com Sucesso!</h1>
-                    <p>O bot está pronto para receber mensagens.</p>
-                </div>
-            </body>
-            </html>
-        `);
-    } else {
-        res.send(`
-            <!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Conectar Chatbot</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100vh;
-                        background-color: #f0f2f5;
-                        text-align: center;
-                        color: #333;
-                    }
-                    .container {
-                        background-color: #fff;
-                        padding: 40px;
-                        border-radius: 12px;
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                    }
-                    h1 {
-                        color: #128C7E;
-                    }
-                    #qrcode-container img {
-                        border: 4px solid #128C7E;
-                        border-radius: 8px;
-                        width: 250px;
-                        height: 250px;
-                    }
-                    p {
-                        margin-top: 20px;
-                        font-size: 1.1em;
-                    }
-                    .message {
-                        font-weight: bold;
-                        margin-top: 10px;
-                        color: #555;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>Escaneie o QR Code</h1>
-                    <p>Use o seu celular para escanear o c&oacute;digo abaixo e conectar o bot.</p>
-                    <div id="qrcode-container">
-                        <img id="qr-image" src="" alt="QR Code" style="display: none;">
-                    </div>
-                    <div class="message" id="status-message">Aguardando QR Code...</div>
-                </div>
-                <script>
-                    const statusMessage = document.getElementById('status-message');
-                    const qrImage = document.getElementById('qr-image');
-
-                    async function fetchQrCode() {
-                        try {
-                            const response = await fetch('/status');
-                            const data = await response.json();
-                            if (data.qrCode) {
-                                qrImage.src = data.qrCode;
-                                qrImage.style.display = 'block';
-                                statusMessage.textContent = 'QR Code recebido. Escaneie para conectar!';
-                            } else {
-                                qrImage.style.display = 'none';
-                                statusMessage.textContent = 'Aguardando o QR Code...';
-                                setTimeout(fetchQrCode, 2000);
-                            }
-                        } catch (error) {
-                            console.error('Erro ao buscar QR Code:', error);
-                            statusMessage.textContent = 'Erro ao carregar o QR Code.';
-                            setTimeout(fetchQrCode, 5000);
-                        }
-                    }
-                    fetchQrCode();
-                </script>
-            </body>
-            </html>
-        `);
-    }
-});
-
-// Nova rota para servir o QR code em formato de imagem base64
-app.get('/status', (req, res) => {
-    res.json({
-        qrCode: qrCodeBase64,
-        clientReady: clientReady
-    });
-});
-
 // Manipula todas as mensagens recebidas
 client.on('message_create', async (message) => {
+    // Log para verificar se o evento foi disparado
+    console.log(`Mensagem recebida de ${message.from}: "${message.body}"`);
+    
     const userNumber = normalizePhoneNumber(message.from);
     const body = message.body;
     const normalizedBody = body?.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -500,78 +384,88 @@ client.on('message_create', async (message) => {
         return handlers.sendUnauthorizedMessage(userNumber);
     }
     
-    const chat = await message.getChat();
+    // Adicionando um try-catch para capturar erros silenciosos
+    try {
+        const chat = await message.getChat();
 
-    if (normalizedBody === 's' || normalizedBody === 'sair') {
-        handlers.resetConversation(userNumber);
-        return;
-    }
+        if (normalizedBody === 's' || normalizedBody === 'sair') {
+            handlers.resetConversation(userNumber);
+            return;
+        }
 
-    stateManager.setTimeout(userNumber);
-    
-    const currentState = stateManager.getState(userNumber);
+        stateManager.setTimeout(userNumber);
+        
+        const currentState = stateManager.getState(userNumber);
+        console.log(`Estado atual para ${userInfo.name}: ${currentState}`);
 
-    switch (currentState) {
-        case 'main_menu':
-            if (normalizedBody === '1') {
-                await handlers.handleBoletos(userNumber, chat, userInfo);
-            } else if (normalizedBody === '2') {
-                await handlers.handleContasMenu(userNumber, chat, userInfo);
-            } else if (normalizedBody === '3' || normalizedBody === '4' || normalizedBody === '5' || normalizedBody === '6') {
-                 await client.sendMessage(userNumber, 'Opção em desenvolvimento. Escolha 1 ou 2 por enquanto.');
-                 logInteraction(userNumber, userInfo, 'Opção em desenvolvimento', 'system_message');
-            } else {
-                 await client.sendMessage(userNumber, 'Opção inválida. Digite um número de 1 a 6 para continuar ou "s" para sair.');
-                 logInteraction(userNumber, userInfo, 'Opção inválida', 'system_message');
-            }
-            break;
-
-        case 'boletos_menu':
-            if (normalizedBody === '0') {
-                await handlers.sendMainMenu(userNumber, userInfo, false);
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.');
-                logInteraction(userNumber, userInfo, 'Opção inválida', 'system_message');
-            }
-            break;
-
-        case 'contas_mes_selection':
-            if (normalizedBody === '0') {
-                await handlers.sendMainMenu(userNumber, userInfo, false);
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                const mesSelecionado = parseInt(normalizedBody);
-                if (!isNaN(mesSelecionado) && mesSelecionado >= 1 && mesSelecionado <= 12) {
-                    await handlers.handleContas(userNumber, chat, userInfo, mesSelecionado);
+        switch (currentState) {
+            case 'main_menu':
+                if (normalizedBody === '1') {
+                    await handlers.handleBoletos(userNumber, chat, userInfo);
+                } else if (normalizedBody === '2') {
+                    await handlers.handleContasMenu(userNumber, chat, userInfo);
+                } else if (normalizedBody === '3' || normalizedBody === '4' || normalizedBody === '5' || normalizedBody === '6') {
+                     await client.sendMessage(userNumber, 'Opção em desenvolvimento. Escolha 1 ou 2 por enquanto.');
+                     logInteraction(userNumber, userInfo, 'Opção em desenvolvimento', 'system_message');
                 } else {
-                    await client.sendMessage(userNumber, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.');
-                    logInteraction(userNumber, userInfo, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.', 'system_message');
+                     await client.sendMessage(userNumber, 'Opção inválida. Digite um número de 1 a 6 para continuar ou "s" para sair.');
+                     logInteraction(userNumber, userInfo, 'Opção inválida', 'system_message');
                 }
-            }
-            break;
+                break;
 
-        case 'contas_navigation':
-            if (normalizedBody === '0') {
-                await handlers.handleContasMenu(userNumber, chat, userInfo);
-            } else if (normalizedBody === 's') {
-                await handlers.resetConversation(userNumber);
-            } else {
-                await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.');
-                logInteraction(userNumber, userInfo, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.', 'system_message');
-            }
-            break;
+            case 'boletos_menu':
+                if (normalizedBody === '0') {
+                    await handlers.sendMainMenu(userNumber, userInfo, false);
+                } else if (normalizedBody === 's') {
+                    await handlers.resetConversation(userNumber);
+                } else {
+                    await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu inicial ou "s" para sair.');
+                    logInteraction(userNumber, userInfo, 'Opção inválida', 'system_message');
+                }
+                break;
 
-        default:
-            if (normalizedBody === 'oi' || normalizedBody === 'ola') {
-                await handlers.sendMainMenu(userNumber, userInfo);
-            } else {
-                await client.sendMessage(userNumber, 'Digite "oi" ou "ola" para iniciar!');
-                logInteraction(userNumber, userInfo, 'Digite "oi" ou "ola" para iniciar!', 'system_message');
-            }
-            break;
+            case 'contas_mes_selection':
+                if (normalizedBody === '0') {
+                    await handlers.sendMainMenu(userNumber, userInfo, false);
+                } else if (normalizedBody === 's') {
+                    await handlers.resetConversation(userNumber);
+                } else {
+                    const mesSelecionado = parseInt(normalizedBody);
+                    if (!isNaN(mesSelecionado) && mesSelecionado >= 1 && mesSelecionado <= 12) {
+                        await handlers.handleContas(userNumber, chat, userInfo, mesSelecionado);
+                    } else {
+                        await client.sendMessage(userNumber, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.');
+                        logInteraction(userNumber, userInfo, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.', 'system_message');
+                    }
+                }
+                break;
+
+            case 'contas_navigation':
+                if (normalizedBody === '0') {
+                    await handlers.handleContasMenu(userNumber, chat, userInfo);
+                } else if (normalizedBody === 's') {
+                    await handlers.resetConversation(userNumber);
+                } else {
+                    await client.sendMessage(userNumber, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.');
+                    logInteraction(userNumber, userInfo, 'Opção inválida. Digite 0 para voltar ao menu de meses ou "s" para sair.', 'system_message');
+                }
+                break;
+
+            default:
+                if (normalizedBody === 'oi' || normalizedBody === 'ola') {
+                    console.log('Comando "oi" ou "ola" recebido. Chamando sendMainMenu...');
+                    await handlers.sendMainMenu(userNumber, userInfo);
+                    console.log('sendMainMenu executado com sucesso.');
+                } else {
+                    await client.sendMessage(userNumber, 'Digite "oi" ou "ola" para iniciar!');
+                    logInteraction(userNumber, userInfo, 'Digite "oi" ou "ola" para iniciar!', 'system_message');
+                }
+                break;
+        }
+    } catch (error) {
+        console.error(`Erro inesperado ao processar a mensagem de ${userNumber}:`, error);
+        logInteraction(userNumber, userInfo, `Erro inesperado: ${error.message}`, 'error');
+        await client.sendMessage(userNumber, 'Ops! Ocorreu um erro interno. Por favor, tente novamente mais tarde.');
     }
 });
 
