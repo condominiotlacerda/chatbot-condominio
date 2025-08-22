@@ -4,7 +4,7 @@ const { createServer } = require('http');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const path = require('path');
-const fs = require('fs').promises; // Usando a versão de promessas do fs
+const fs = require('fs').promises;
 
 // Define a porta do servidor
 const PORT = process.env.PORT || 8000;
@@ -146,7 +146,6 @@ const handlers = {
         if (isInitial) {
             
             try {
-                // messageMedia não está definido no código original
                 // const media = MessageMedia.fromFilePath(path.join(__dirname, 'imagens', 'lacerda_assistente.png'));
                 // await client.sendMessage(userNumber, media);
                 // logInteraction(userNumber, userInfo, 'Imagem lacerda_assistente.png enviada', 'file_sent');
@@ -169,7 +168,6 @@ const handlers = {
         console.log("--- DEBUG: A FUNÇÃO HANDLEBOLETOS FOI CHAMADA ---");
         const apartment = userInfo.apartment;
         
-        // Adiciona a mensagem de "Aguarde..."
         await chat.sendMessage('Aguarde...');
         
         const boletosFilePath = path.join(__dirname, 'dados', 'boletos_entrega.json');
@@ -207,7 +205,7 @@ const handlers = {
                             const filePath = path.join(__dirname, 'pdfs', 'boletos', filename);
 
                             try {
-                                await fs.access(filePath); // Verifica se o arquivo existe
+                                await fs.access(filePath);
                                 const media = MessageMedia.fromFilePath(filePath);
                                 await client.sendMessage(userNumber, media, {
                                     sendMediaAsDocument: true,
@@ -239,8 +237,6 @@ const handlers = {
             await client.sendMessage(userNumber, 'Ocorreu um erro ao processar os boletos. Por favor, tente novamente mais tarde.');
             logInteraction(userNumber, userInfo, `Erro ao ler ou processar o arquivo de boletos: ${error.message}`, 'error');
             stateManager.states[userNumber] = 'main_menu';
-        } finally {
-            // await chat.clearState(); // Esta função não existe no objeto chat
         }
     },
 
@@ -261,7 +257,6 @@ const handlers = {
     },
 
     async handleContas(userNumber, chat, userInfo, mesSelecionado) {
-        // Adiciona a mensagem de "Aguarde..."
         await chat.sendMessage('Aguarde...');
         
         const anoAtual = new Date().getFullYear();
@@ -276,7 +271,7 @@ const handlers = {
             const filename = `prestacao_contas_${nomeMesPorExtenso}_${anoAtual}.pdf`;
             
             try {
-                await fs.access(contasPath); // Verifica se o arquivo existe
+                await fs.access(contasPath);
                 const media = MessageMedia.fromFilePath(contasPath);
                 await client.sendMessage(userNumber, media, {
                     sendMediaAsDocument: true,
@@ -293,8 +288,6 @@ const handlers = {
                 await client.sendMessage(userNumber, `Erro ao enviar a prestação de contas de ${nomeMesPorExtenso}. Verifique se o arquivo existe.`);
                 logInteraction(userNumber, userInfo, `Erro ao enviar a prestação de contas de ${nomeMesPorExtenso}. Verifique se o arquivo existe.`, 'system_message');
                 stateManager.states[userNumber] = 'contas_mes_selection';
-            } finally {
-                // await chat.clearState(); // Esta função não existe no objeto chat
             }
         } else {
             await client.sendMessage(userNumber, 'Opção de mês inválida. Digite um número de 1 a 12 para o mês.');
@@ -308,6 +301,7 @@ const handlers = {
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
+        // Argumentos para reduzir o consumo de recursos de memória e CPU
         headless: true,
         args: [
             '--no-sandbox',
@@ -317,7 +311,34 @@ const client = new Client({
             '--no-first-run',
             '--no-zygote',
             '--disable-gpu',
-            '--single-process', // Necessário para o Render
+            '--single-process',
+            '--disable-infobars',
+            '--window-position=0,0',
+            '--ignore-certificate-errors',
+            '--ignore-certificate-errors-skip-list',
+            '--disable-audio-output',
+            '--disable-background-networking',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-breakpad',
+            '--disable-client-side-phishing-detection',
+            '--disable-component-update',
+            '--disable-default-apps',
+            '--disable-extensions',
+            '--disable-features=interest-quiz',
+            '--disable-hang-monitor',
+            '--disable-ipc-flooding-protection',
+            '--disable-popup-blocking',
+            '--disable-prompt-on-repost',
+            '--disable-renderer-backgrounding',
+            '--disable-speech-api',
+            '--disable-sync',
+            '--disable-web-security',
+            '--enable-features=NetworkService,NetworkServiceInProcess',
+            '--enable-automation',
+            '--force-device-scale-factor=1',
+            '--font-render-hinting=none',
+            '--force-color-profile=srgb'
         ],
     },
 });
@@ -330,7 +351,8 @@ client.on('qr', (qr) => {
             console.error('Erro ao gerar QR Code como imagem:', err);
             qrCodeBase64 = null;
         } else {
-            console.log('QR Code recebido. Acesse http://localhost:8000 para escanear.');
+            // Mensagem de log genérica para funcionar tanto localmente quanto em produção
+            console.log('QR Code recebido. Por favor, acesse a página para escanear.');
             qrCodeBase64 = url; // Armazena a imagem em base64
         }
     });
@@ -350,7 +372,6 @@ client.on('disconnected', (reason) => {
 
 // Rota principal que serve a página HTML com o QR code
 app.get('/', (req, res) => {
-    // Se o cliente já estiver pronto, mostra a mensagem de conectado.
     if (clientReady) {
         res.send(`
             <!DOCTYPE html>
@@ -375,7 +396,6 @@ app.get('/', (req, res) => {
             </html>
         `);
     } else {
-        // Se ainda não estiver pronto, mostra a página que vai carregar o QR code
         res.send(`
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -445,12 +465,12 @@ app.get('/', (req, res) => {
                             } else {
                                 qrImage.style.display = 'none';
                                 statusMessage.textContent = 'Aguardando o QR Code...';
-                                setTimeout(fetchQrCode, 2000); // Tenta novamente a cada 2 segundos.
+                                setTimeout(fetchQrCode, 2000);
                             }
                         } catch (error) {
                             console.error('Erro ao buscar QR Code:', error);
                             statusMessage.textContent = 'Erro ao carregar o QR Code.';
-                            setTimeout(fetchQrCode, 5000); // Tenta novamente em caso de erro.
+                            setTimeout(fetchQrCode, 5000);
                         }
                     }
                     fetchQrCode();
@@ -487,10 +507,8 @@ client.on('message_create', async (message) => {
         return;
     }
 
-    // Atualiza o timeout da conversa
     stateManager.setTimeout(userNumber);
     
-    // Lógica de roteamento da conversa
     const currentState = stateManager.getState(userNumber);
 
     switch (currentState) {
